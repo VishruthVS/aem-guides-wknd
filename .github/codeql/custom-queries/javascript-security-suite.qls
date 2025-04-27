@@ -1,0 +1,13 @@
+# JavaScript Security Query Suite
+---
+- description: JavaScript Security Queries
+- queries: .
+  from: javascript-security-extended.qls
+- include:
+    id:
+      - javascript/security-checks
+      - javascript/hardcoded-credentials  
+      - javascript/unsafe-http-requests
+- exclude:
+    precision:
+      - "very-low"
