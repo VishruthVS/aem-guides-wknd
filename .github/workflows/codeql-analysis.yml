@@ -9,26 +9,16 @@ on:
     - cron: '0 0 * * 0'  # Run once a week on Sunday
   workflow_dispatch:  # Allow manual triggering
 
-# Set permissions for GitHub Pages deployment
+# Set permissions
 permissions:
   actions: read
   contents: read
   security-events: write
-  pages: write
-  id-token: write
-
-# Allow one concurrent deployment
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
 
 jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -62,94 +52,116 @@ jobs:
       run: |
         find sarif-results -type f | sort
         
-    # Create the dashboard directory structure
-    - name: Setup directory structure
-      run: |
-        # Create directories for GitHub Pages deployment
-        mkdir -p ./_site
-        mkdir -p ./_site/reports
-        
     # Generate dashboard data from SARIF files  
     - name: Generate dashboard data from SARIF
       run: |
         # Create a default empty dashboard data file
-        echo '{"issues":[],"severityCounts":{"critical":0,"high":0,"medium":0,"low":0}}' > ./_site/dashboard-data.json
+        echo '{"issues":[],"severityCounts":{"critical":0,"high":0,"medium":0,"low":0}}' > ./dashboard-data.json
         
         # Run the dashboard generator script
-        node .github/codeql/sarif-to-dashboard.js sarif-results ./_site/dashboard-data.json || echo "Error processing SARIF files - using default data"
+        node .github/codeql/sarif-to-dashboard.js sarif-results ./dashboard-data.json || echo "Error processing SARIF files - using default data"
         
         # For debugging - show the generated data
         echo "Generated dashboard data:"
-        cat ./_site/dashboard-data.json
+        cat ./dashboard-data.json
         
-    # Create the dashboard HTML
-    - name: Prepare HTML dashboard
+    # Install jq for JSON processing
+    - name: Install jq
+      run: sudo apt-get install -y jq
+      
+    # Add a summary report to the GitHub Actions run
+    - name: Create GitHub Actions Summary
       run: |
-        # Copy the dashboard template
-        cp .github/codeql/dashboard-template.html ./_site/index.html
+        echo "# CodeQL Analysis Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
         
-        # Create a JavaScript file with the dashboard data
-        echo "const dashboardData = $(cat ./_site/dashboard-data.json);" > ./_site/data.js
+        # Add severity counts
+        echo "## Summary of Issues" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
         
-        # Inject the data script and replace mock data with real data
-        sed -i '/<head>/a \    <script src="data.js"></script>' ./_site/index.html
-        sed -i 's/const mockData = {.*}/const mockData = dashboardData/' ./_site/index.html
+        # Extract severity counts
+        CRITICAL=$(jq -r '.severityCounts.critical // 0' ./dashboard-data.json)
+        HIGH=$(jq -r '.severityCounts.high // 0' ./dashboard-data.json)
+        MEDIUM=$(jq -r '.severityCounts.medium // 0' ./dashboard-data.json)
+        LOW=$(jq -r '.severityCounts.low // 0' ./dashboard-data.json)
+        TOTAL=$((CRITICAL + HIGH + MEDIUM + LOW))
         
-    # Generate HTML reports from SARIF files
+        # Display severity counts with emoji indicators
+        echo "- 🔴 **Critical:** ${CRITICAL}" >> $GITHUB_STEP_SUMMARY
+        echo "- 🟠 **High:** ${HIGH}" >> $GITHUB_STEP_SUMMARY
+        echo "- 🟡 **Medium:** ${MEDIUM}" >> $GITHUB_STEP_SUMMARY
+        echo "- 🔵 **Low:** ${LOW}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Total:** ${TOTAL}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        # Create a table with the issues
+        echo "## Security Issues" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        # Check if there are any issues
+        ISSUE_COUNT=$(jq '.issues | length' ./dashboard-data.json)
+        
+        if [ "$ISSUE_COUNT" -gt 0 ]; then
+          echo "| Severity | Rule | Location | Message |" >> $GITHUB_STEP_SUMMARY
+          echo "| --- | --- | --- | --- |" >> $GITHUB_STEP_SUMMARY
+          
+          # Extract information from dashboard data
+          jq -r '.issues[] | "| " + .severity + " | " + .rule + " | " + .location + " | " + .message + " |"' ./dashboard-data.json >> $GITHUB_STEP_SUMMARY
+        else
+          echo "🎉 **No security issues found!**" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        # Add top vulnerable files if available
+        if jq -e '.topFiles' ./dashboard-data.json > /dev/null 2>&1; then
+          echo "## Top Files with Issues" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "| File | Issue Count |" >> $GITHUB_STEP_SUMMARY
+          echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
+          
+          jq -r '.topFiles | to_entries | sort_by(.value) | reverse | .[0:5] | .[] | "| " + .key + " | " + (.value | tostring) + " |"' ./dashboard-data.json >> $GITHUB_STEP_SUMMARY
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        # Add categories breakdown if available
+        if jq -e '.categories' ./dashboard-data.json > /dev/null 2>&1; then
+          echo "## Issues by Category" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          echo "| Category | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
+          
+          jq -r '.categories | to_entries | sort_by(.value) | reverse | .[] | "| " + .key + " | " + (.value | tostring) + " |"' ./dashboard-data.json >> $GITHUB_STEP_SUMMARY
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        # Add a note about SARIF artifacts
+        echo "## About This Report" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "This is an automatically generated report from CodeQL analysis. The full SARIF results are available as artifacts in this workflow run." >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "Run completed at: $(date)" >> $GITHUB_STEP_SUMMARY
+    
+    # Generate HTML reports from SARIF files (only for artifact, not for display)
     - name: Generate HTML report with SARIF Multitool
       run: |
         npm install -g @microsoft/sarif-multitool
-        
-        # Create index page for reports
-        echo '<!DOCTYPE html>
-        <html>
-        <head>
-            <title>CodeQL SARIF Reports</title>
-            <style>
-                body { font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; }
-                h1 { color: #333; }
-                ul { list-style-type: none; padding: 0; }
-                li { margin-bottom: 10px; }
-                a { color: #0366d6; text-decoration: none; }
-                a:hover { text-decoration: underline; }
-            </style>
-        </head>
-        <body>
-            <h1>CodeQL SARIF Reports</h1>
-            <p><a href="../">Back to Dashboard</a></p>
-            <ul>' > ./_site/reports/index.html
+        mkdir -p ./html-reports
         
         # Process each SARIF file to generate HTML reports
         find sarif-results -type f -name "*.sarif" | while read file; do
           filename=$(basename "$file" .sarif)
-          sarif-multitool transform -t HTML -o "./_site/reports/${filename}.html" "$file" || echo "Error processing $file"
-          echo "<li><a href='${filename}.html'>${filename}</a></li>" >> ./_site/reports/index.html
+          sarif-multitool transform -t HTML -o "./html-reports/${filename}.html" "$file" || echo "Error processing $file"
         done
         
-        echo '</ul>
-        </body>
-        </html>' >> ./_site/reports/index.html
-        
-    # Upload the HTML reports as artifacts
-    - name: Upload reports as artifact
+    # Upload the HTML reports as artifacts for download
+    - name: Upload HTML reports as artifact
       uses: actions/upload-artifact@v4
       with:
-        name: codeql-dashboard-and-reports
-        path: ./_site
+        name: codeql-html-reports
+        path: ./html-reports
         retention-days: 7
-        
-    # Configure Pages
-    - name: Setup Pages
-      uses: actions/configure-pages@v4
-      
-    # Upload artifact for deployment
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: ./_site
-        
-    # Deploy to GitHub Pages
-    - name: Deploy to GitHub Pages
-      id: deployment
-      if: github.ref == 'refs/heads/main'
-      uses: actions/deploy-pages@v4
