@@ -14,8 +14,6 @@ permissions:
   actions: read
   contents: write
   security-events: write
-  pages: write
-  id-token: write
 
 jobs:
   analyze:
@@ -129,19 +127,12 @@ jobs:
         name: codeql-dashboard-and-reports
         path: codeql-dashboard
         retention-days: 7
-    
-    # Configure GitHub Pages
-    - name: Setup Pages
-      uses: actions/configure-pages@v3
-    
-    # Upload the artifact for deployment to GitHub Pages
-    - name: Upload artifact for GitHub Pages
-      uses: actions/upload-pages-artifact@v1
-      with:
-        path: 'codeql-dashboard'
         
-    # Deploy to GitHub Pages  
+    # Deploy to GitHub Pages using the JamesIves action which allows subdirectory deployment
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
-      id: deployment
-      uses: actions/deploy-pages@v2
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        folder: codeql-dashboard
+        target-folder: codeql-dashboard
+        clean: true
