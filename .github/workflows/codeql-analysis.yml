@@ -36,3 +36,59 @@ jobs:
       uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{matrix.language}}"
+        output: sarif-results
+
+    - name: Upload SARIF results as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: codeql-sarif-results
+        path: sarif-results
+        retention-days: 7
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+        
+    - name: Generate dashboard data from SARIF
+      run: |
+        mkdir -p dashboard-output
+        node .github/codeql/sarif-to-dashboard.js sarif-results dashboard-output/dashboard-data.json
+        
+    - name: Prepare HTML dashboard
+      run: |
+        cp .github/codeql/dashboard-template.html dashboard-output/index.html
+        # Update the dashboard to use real data
+        sed -i 's/const mockData = {/const mockData = JSON.parse(`cat dashboard-output\/dashboard-data.json`); \/\//g' dashboard-output/index.html
+        
+    - name: Upload dashboard as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: codeql-dashboard
+        path: dashboard-output
+        retention-days: 7
+        
+    - name: Generate HTML report with SARIF Multitool
+      if: always()
+      run: |
+        npm install -g @microsoft/sarif-multitool
+        mkdir -p sarif-html-report
+        find sarif-results -name "*.sarif" -exec sarif-multitool transform -t HTML -o sarif-html-report/report-{}.html {} \;
+        
+    - name: Upload HTML report as artifact
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: codeql-html-report
+        path: sarif-html-report
+        retention-days: 7
+        
+    # Optional: If you have GitHub Pages enabled, you could deploy the dashboard there
+    - name: Deploy to GitHub Pages
+      if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dashboard-output
+        destination_dir: codeql-dashboard
+        keep_files: false
