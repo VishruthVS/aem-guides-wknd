@@ -31,7 +31,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
@@ -46,14 +46,14 @@ jobs:
         output: sarif-results
 
     - name: Upload SARIF results as artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: codeql-sarif-results
         path: sarif-results
         retention-days: 7
     
     - name: Setup Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
         node-version: '16'
         
@@ -132,7 +132,7 @@ jobs:
         
     # Upload the HTML reports as artifacts
     - name: Upload reports as artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: codeql-dashboard-and-reports
         path: ./_site
@@ -140,11 +140,11 @@ jobs:
         
     # Configure Pages
     - name: Setup Pages
-      uses: actions/configure-pages@v3
+      uses: actions/configure-pages@v4
       
     # Upload artifact for deployment
     - name: Upload artifact
-      uses: actions/upload-pages-artifact@v2
+      uses: actions/upload-pages-artifact@v3
       with:
         path: ./_site
         
@@ -152,4 +152,4 @@ jobs:
     - name: Deploy to GitHub Pages
       id: deployment
       if: github.ref == 'refs/heads/main'
-      uses: actions/deploy-pages@v2
+      uses: actions/deploy-pages@v4
