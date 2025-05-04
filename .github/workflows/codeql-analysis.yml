@@ -7,21 +7,20 @@ on:
     branches: [ "main" ]
   schedule:
     - cron: '0 0 * * 0'  # Run once a week on Sunday
+  workflow_dispatch:  # Allow manual triggering
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  actions: read
+  contents: write
+  security-events: write
+  pages: write
+  id-token: write
 
 jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-
-    strategy:
-      fail-fast: false
-      matrix:
-        language: [ 'javascript' ]
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -29,13 +28,13 @@ jobs:
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v3
       with:
-        languages: ${{ matrix.language }}
+        languages: javascript
         queries: +./.github/codeql/custom-queries
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
       with:
-        category: "/language:${{matrix.language}}"
+        category: "/language:javascript"
         output: sarif-results
 
     - name: Upload SARIF results as artifact
@@ -50,45 +49,99 @@ jobs:
       with:
         node-version: '16'
         
+    # Debug step to see what's in the SARIF directory
+    - name: Debug SARIF directory
+      run: |
+        find sarif-results -type f | sort
+        
+    # Create the dashboard directory structure
+    - name: Setup directory structure
+      run: |
+        # Create directories for GitHub Pages deployment
+        mkdir -p codeql-dashboard
+        mkdir -p codeql-dashboard/reports
+        
+    # Generate dashboard data from SARIF files  
     - name: Generate dashboard data from SARIF
       run: |
-        mkdir -p dashboard-output
-        node .github/codeql/sarif-to-dashboard.js sarif-results dashboard-output/dashboard-data.json
+        # Create a default empty dashboard data file
+        echo '{"issues":[],"severityCounts":{"critical":0,"high":0,"medium":0,"low":0}}' > codeql-dashboard/dashboard-data.json
         
+        # Run the dashboard generator script
+        node .github/codeql/sarif-to-dashboard.js sarif-results codeql-dashboard/dashboard-data.json || echo "Error processing SARIF files - using default data"
+        
+        # For debugging - show the generated data
+        echo "Generated dashboard data:"
+        cat codeql-dashboard/dashboard-data.json
+        
+    # Create the dashboard HTML
     - name: Prepare HTML dashboard
       run: |
-        cp .github/codeql/dashboard-template.html dashboard-output/index.html
-        # Update the dashboard to use real data
-        sed -i 's/const mockData = {/const mockData = JSON.parse(`cat dashboard-output\/dashboard-data.json`); \/\//g' dashboard-output/index.html
+        # Copy the dashboard template
+        cp .github/codeql/dashboard-template.html codeql-dashboard/index.html
         
-    - name: Upload dashboard as artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: codeql-dashboard
-        path: dashboard-output
-        retention-days: 7
+        # Create a JavaScript file with the dashboard data
+        echo "const dashboardData = $(cat codeql-dashboard/dashboard-data.json);" > codeql-dashboard/data.js
         
+        # Inject the data script and replace mock data with real data
+        sed -i '/<head>/a \    <script src="data.js"></script>' codeql-dashboard/index.html
+        sed -i 's/const mockData = {.*}/const mockData = dashboardData/' codeql-dashboard/index.html
+        
+    # Generate HTML reports from SARIF files
     - name: Generate HTML report with SARIF Multitool
-      if: always()
       run: |
         npm install -g @microsoft/sarif-multitool
-        mkdir -p sarif-html-report
-        find sarif-results -name "*.sarif" -exec sarif-multitool transform -t HTML -o sarif-html-report/report-{}.html {} \;
         
-    - name: Upload HTML report as artifact
-      if: always()
+        # Create index page for reports
+        echo '<!DOCTYPE html>
+        <html>
+        <head>
+            <title>CodeQL SARIF Reports</title>
+            <style>
+                body { font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; }
+                h1 { color: #333; }
+                ul { list-style-type: none; padding: 0; }
+                li { margin-bottom: 10px; }
+                a { color: #0366d6; text-decoration: none; }
+                a:hover { text-decoration: underline; }
+            </style>
+        </head>
+        <body>
+            <h1>CodeQL SARIF Reports</h1>
+            <p><a href="../">Back to Dashboard</a></p>
+            <ul>' > codeql-dashboard/reports/index.html
+        
+        # Process each SARIF file to generate HTML reports
+        find sarif-results -type f -name "*.sarif" | while read file; do
+          filename=$(basename "$file" .sarif)
+          sarif-multitool transform -t HTML -o "codeql-dashboard/reports/${filename}.html" "$file" || echo "Error processing $file"
+          echo "<li><a href='${filename}.html'>${filename}</a></li>" >> codeql-dashboard/reports/index.html
+        done
+        
+        echo '</ul>
+        </body>
+        </html>' >> codeql-dashboard/reports/index.html
+        
+    # Upload the HTML reports as artifacts
+    - name: Upload reports as artifact
       uses: actions/upload-artifact@v3
       with:
-        name: codeql-html-report
-        path: sarif-html-report
+        name: codeql-dashboard-and-reports
+        path: codeql-dashboard
         retention-days: 7
-        
-    # Optional: If you have GitHub Pages enabled, you could deploy the dashboard there
-    - name: Deploy to GitHub Pages
-      if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-      uses: peaceiris/actions-gh-pages@v3
+    
+    # Configure GitHub Pages
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+    
+    # Upload the artifact for deployment to GitHub Pages
+    - name: Upload artifact for GitHub Pages
+      uses: actions/upload-pages-artifact@v1
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dashboard-output
-        destination_dir: codeql-dashboard
-        keep_files: false
+        path: 'codeql-dashboard'
+        
+    # Deploy to GitHub Pages  
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      id: deployment
+      uses: actions/deploy-pages@v2
