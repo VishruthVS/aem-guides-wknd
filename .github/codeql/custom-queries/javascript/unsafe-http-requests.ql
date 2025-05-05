@@ -9,6 +9,8 @@
  */
 
 import javascript
+import semmle.javascript.dataflow.DataFlow
+import semmle.javascript.security.dataflow.RequestForgeryCustomizations
 
 /**
  * Identifies direct network request calls

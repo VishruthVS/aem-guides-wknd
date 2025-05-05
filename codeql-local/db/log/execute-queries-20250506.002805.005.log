@@ -1,0 +1,88 @@
+[2025-05-06 00:28:05] This is codeql execute queries -J-Xmx1800M --off-heap-ram=1556 --verbosity=progress --logdir=/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/log --evaluator-log-level=5 --warnings=show --dynamic-join-order-mode=none --qlconfig-file=/Users/vishruthvs/Projects/aem-guides-wknd/qlconfig.yml --no-rerun --interpret-passthrough=null,--format=sarif-latest,-o=/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/results/codeql-results.sarif,--max-paths=4,--csv-location-format=line-column,--print-diagnostics-summary,--print-metrics-summary,--qlconfig-file=/Users/vishruthvs/Projects/aem-guides-wknd/qlconfig.yml,--,/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db,.github/codeql/custom-queries/javascript/ --output=/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/results -- /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/db-javascript .github/codeql/custom-queries/javascript/
+[2025-05-06 00:28:05] Calling plumbing command: codeql resolve queries --qlconfig-file=/Users/vishruthvs/Projects/aem-guides-wknd/qlconfig.yml --format=json -- .github/codeql/custom-queries/javascript/
+[2025-05-06 00:28:05] [SPAMMY] resolve queries> Scanning for QL files at /Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript.
+[2025-05-06 00:28:05] [PROGRESS] resolve queries> Recording pack reference (anonymous QL pack at .github/codeql/custom-queries/javascript/anything) at .github/codeql/custom-queries/javascript.
+[2025-05-06 00:28:05] [SPAMMY] resolve queries> Found 3 QL files in /Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript.
+[2025-05-06 00:28:05] Plumbing command codeql resolve queries completed:
+                      [
+                        "/Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/security-checks.ql",
+                        "/Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/hardcoded-credentials.ql",
+                        "/Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/unsafe-http-requests.ql"
+                      ]
+[2025-05-06 00:28:05] Creating executor with 1 threads.
+[2025-05-06 00:28:05] Calling plumbing command: codeql resolve extensions --qlconfig-file=/Users/vishruthvs/Projects/aem-guides-wknd/qlconfig.yml --include-extension-row-locations .github/codeql/custom-queries/javascript/
+[2025-05-06 00:28:05] Calling plumbing command: codeql resolve queries --qlconfig-file=/Users/vishruthvs/Projects/aem-guides-wknd/qlconfig.yml --allow-library-packs --format startingpacks -- .github/codeql/custom-queries/javascript/
+[2025-05-06 00:28:05] [SPAMMY] resolve queries> Scanning for QL files at /Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript.
+[2025-05-06 00:28:05] [PROGRESS] resolve queries> Recording pack reference (anonymous QL pack at .github/codeql/custom-queries/javascript/anything) at .github/codeql/custom-queries/javascript.
+[2025-05-06 00:28:05] [SPAMMY] resolve queries> Found 3 QL files in /Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript.
+[2025-05-06 00:28:05] Plumbing command codeql resolve queries completed:
+                      [
+                        ".github/codeql/custom-queries/javascript"
+                      ]
+[2025-05-06 00:28:05] Calling plumbing command: codeql resolve extensions-by-pack --qlconfig-file=/Users/vishruthvs/Projects/aem-guides-wknd/qlconfig.yml --include-extension-row-locations -- .github/codeql/custom-queries/javascript
+[2025-05-06 00:28:05] [SPAMMY] resolve extensions-by-pack> [INCOMPATIBILITY] <anonymous pack>: not 0.0.0 {root: <anonymous pack>@0.0.0}
+[2025-05-06 00:28:05] [SPAMMY] resolve extensions-by-pack> [DERIVATION] <anonymous pack>: 0.0.0 {<anonymous pack>: not 0.0.0 {root: <anonymous pack>@0.0.0}}
+[2025-05-06 00:28:05] [SPAMMY] resolve extensions-by-pack> [DECISION 1] <anonymous pack>: 0.0.0
+[2025-05-06 00:28:05] Plumbing command codeql resolve extensions-by-pack completed:
+                      {
+                        "models" : [ ],
+                        "data" : { },
+                        "threatModels" : { },
+                        "extensionPacks" : [ ]
+                      }
+[2025-05-06 00:28:05] Plumbing command codeql resolve extensions completed:
+                      {
+                        "models" : [ ],
+                        "data" : { },
+                        "threatModels" : { },
+                        "extensionPacks" : [ ]
+                      }
+[2025-05-06 00:28:05] Calling plumbing command: codeql resolve library-path --qlconfig-file=/Users/vishruthvs/Projects/aem-guides-wknd/qlconfig.yml --query=/Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/security-checks.ql --format=json
+[2025-05-06 00:28:05] [DETAILS] resolve library-path> Resolving query at normalized path /Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/security-checks.ql.
+[2025-05-06 00:28:05] [DETAILS] resolve library-path> Found no pack; trying after symlink resolution with /Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/security-checks.ql.
+[2025-05-06 00:28:05] [DETAILS] resolve library-path> Found enclosing pack 'javascript' at /Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript.
+[2025-05-06 00:28:05] [DETAILS] resolve library-path> Adding compilation cache at /Users/vishruthvs/.codeql/compile-cache.
+[2025-05-06 00:28:05] [DETAILS] resolve library-path> Resolving library dependencies from /Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/security-checks.ql.
+[2025-05-06 00:28:05] [SPAMMY] resolve library-path> [INCOMPATIBILITY] <anonymous pack>: not 0.0.0 {root: <anonymous pack>@0.0.0}
+[2025-05-06 00:28:05] [SPAMMY] resolve library-path> [DERIVATION] <anonymous pack>: 0.0.0 {<anonymous pack>: not 0.0.0 {root: <anonymous pack>@0.0.0}}
+[2025-05-06 00:28:05] [SPAMMY] resolve library-path> [DECISION 1] <anonymous pack>: 0.0.0
+[2025-05-06 00:28:05] [DETAILS] resolve library-path> QL pack dependencies for /Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript resolved OK.
+[2025-05-06 00:28:05] [DETAILS] resolve library-path> Found no dbscheme through dependencies.
+[2025-05-06 00:28:05] Plumbing command codeql resolve library-path completed:
+                      {
+                        "libraryPath" : [
+                          "/Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript"
+                        ],
+                        "compilationCache" : [
+                          "/Users/vishruthvs/.codeql/compile-cache"
+                        ],
+                        "relativeName" : "javascript/security-checks.ql",
+                        "possibleAdvice" : "There should probably be a qlpack.yml file declaring dependencies in /Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript or an enclosing directory.",
+                        "qlPackName" : "javascript"
+                      }
+[2025-05-06 00:28:05] [PROGRESS] execute queries> Compiling query plan for /Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/security-checks.ql.
+[2025-05-06 00:28:05] [DETAILS] execute queries> Resolving imports for /Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/security-checks.ql.
+[2025-05-06 00:28:05] Resolved file set for /Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/security-checks.ql hashes to 959a1d21c631427560e7b3f8891413b8.
+[2025-05-06 00:28:05] [DETAILS] execute queries> Checking QL for /Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/security-checks.ql.
+[2025-05-06 00:28:05] Stale frontend caches are invalidated based on import graph reachability.
+[2025-05-06 00:28:05] ExternalModuleBindingPass ...
+[2025-05-06 00:28:05] ExternalModuleBindingPass time: 00:00.000
+[2025-05-06 00:28:05] CollectInstantiationsPass ...
+[2025-05-06 00:28:05] CollectInstantiationsPass time: 00:00.002
+[2025-05-06 00:28:05] Ql checks ...
+[2025-05-06 00:28:05] Ql checks time: 00:00.026
+[2025-05-06 00:28:05] [WARN] execute queries> WARNING: QLDoc comment is not attached to any QL element (/Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/security-checks.ql:38,1-40,4)
+[2025-05-06 00:28:05] [ERROR] execute queries> ERROR: could not resolve module javascript (/Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/security-checks.ql:10,8-18)
+[2025-05-06 00:28:05] [ERROR] execute queries> ERROR: could not resolve module DataFlow (/Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/security-checks.ql:15,29-37)
+[2025-05-06 00:28:05] [ERROR] execute queries> ERROR: could not resolve module DataFlow (/Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/security-checks.ql:16,10-18)
+[2025-05-06 00:28:05] [ERROR] execute queries> ERROR: could not resolve module DataFlow (/Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/security-checks.ql:28,26-34)
+[2025-05-06 00:28:05] [ERROR] execute queries> ERROR: could not resolve type CallExpr (/Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/security-checks.ql:29,10-18)
+[2025-05-06 00:28:05] [ERROR] execute queries> ERROR: could not resolve module DataFlow (/Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/security-checks.ql:41,6-14)
+[2025-05-06 00:28:05] [ERROR] execute queries> ERROR: could not resolve module DataFlow (/Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/security-checks.ql:41,29-37)
+[2025-05-06 00:28:05] [ERROR] execute queries> ERROR: could not resolve module DataFlow (/Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/custom-queries/javascript/security-checks.ql:45,3-11)
+[2025-05-06 00:28:05] Sequence stamp origin is -6052848081337440068
+[2025-05-06 00:28:05] Pausing evaluation to close the cache at sequence stamp o+0
+[2025-05-06 00:28:05] The disk cache is freshly trimmed; leave it be.
+[2025-05-06 00:28:05] Unpausing evaluation
+[2025-05-06 00:28:05] This NaiveBuddyAllocator requested 0 eviction rounds.
+[2025-05-06 00:28:05] Exiting with code 2

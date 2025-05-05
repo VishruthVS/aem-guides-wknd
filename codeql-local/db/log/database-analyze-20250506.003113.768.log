@@ -1,0 +1,14 @@
+[2025-05-06 00:31:13] This is codeql database analyze codeql-local/db .github/codeql/custom-queries/javascript/ --format=sarif-latest --output=codeql-local/results/codeql-results.sarif
+[2025-05-06 00:31:13] Log file was started late.
+[2025-05-06 00:31:13] [PROGRESS] database analyze> Running queries.
+[2025-05-06 00:31:13] Running plumbing command: codeql database run-queries --evaluator-log-level=5 --warnings=show --dynamic-join-order-mode=none --qlconfig-file=/Users/vishruthvs/Projects/aem-guides-wknd/qlconfig.yml --no-rerun --interpret-passthrough=null,--format=sarif-latest,-o=/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/results/codeql-results.sarif,--max-paths=4,--csv-location-format=line-column,--print-diagnostics-summary,--print-metrics-summary,--qlconfig-file=/Users/vishruthvs/Projects/aem-guides-wknd/qlconfig.yml,--,/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db,.github/codeql/custom-queries/javascript/ -- /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db .github/codeql/custom-queries/javascript/
+[2025-05-06 00:31:13] Calling plumbing command: codeql resolve ram --dataset=/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/db-javascript --format=json
+[2025-05-06 00:31:13] [PROGRESS] resolve ram> Stringpool size measured as 5013930
+[2025-05-06 00:31:13] Plumbing command codeql resolve ram completed:
+                      [
+                        "-J-Xmx1800M",
+                        "--off-heap-ram=1556"
+                      ]
+[2025-05-06 00:31:13] Chaining via /var/folders/68/kbdm7gjn40ncz516dfgt6hxm0000gn/T/codeql.XXXXXXXX.2A38tQhv9m to plumbing: execute queries -J-Xmx1800M --off-heap-ram=1556 --verbosity=progress --logdir=/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/log --evaluator-log-level=5 --warnings=show --dynamic-join-order-mode=none --qlconfig-file=/Users/vishruthvs/Projects/aem-guides-wknd/qlconfig.yml --no-rerun --interpret-passthrough=null,--format=sarif-latest,-o=/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/results/codeql-results.sarif,--max-paths=4,--csv-location-format=line-column,--print-diagnostics-summary,--print-metrics-summary,--qlconfig-file=/Users/vishruthvs/Projects/aem-guides-wknd/qlconfig.yml,--,/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db,.github/codeql/custom-queries/javascript/ --output=/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/results -- /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/db-javascript .github/codeql/custom-queries/javascript/
+[2025-05-06 00:31:13] Plumbing command codeql database run-queries completed with status 70.
+[2025-05-06 00:31:13] Exiting with code 70

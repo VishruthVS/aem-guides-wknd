@@ -8,6 +8,8 @@
  */
 
 import javascript
+import semmle.javascript.security.dataflow.CodeInjectionCustomizations
+import semmle.javascript.dataflow.DataFlow
 
 /**
  * Find potential unsafe direct user input handling

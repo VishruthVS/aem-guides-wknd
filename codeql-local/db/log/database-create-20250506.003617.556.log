@@ -1,0 +1,1130 @@
+[2025-05-06 00:36:17] This is codeql database create codeql-local/db --language=javascript --source-root . --overwrite
+[2025-05-06 00:36:17] Log file was started late.
+[2025-05-06 00:36:17] [PROGRESS] database create> Initializing database at /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db.
+[2025-05-06 00:36:17] Running plumbing command: codeql database init --overwrite --language=javascript --extractor-options-verbosity=1 --qlconfig-file=/Users/vishruthvs/Projects/aem-guides-wknd/qlconfig.yml --source-root=/Users/vishruthvs/Projects/aem-guides-wknd --allow-missing-source-root=false --allow-already-existing -- /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db
+[2025-05-06 00:36:17] Calling plumbing command: codeql resolve languages --extractor-options-verbosity=1 --format=betterjson
+[2025-05-06 00:36:17] [DETAILS] resolve languages> Scanning for [codeql-extractor.yml] from /opt/codeql/
+[2025-05-06 00:36:17] [DETAILS] resolve languages> Scanning for [codeql-extractor.yml] from /opt/codeql/experimental/codeql-workspace.yml
+[2025-05-06 00:36:17] [DETAILS] resolve languages> Parsing /opt/codeql/experimental/rust/codeql-extractor.yml.
+[2025-05-06 00:36:17] [DETAILS] resolve languages> Parsing /opt/codeql/go/codeql-extractor.yml.
+[2025-05-06 00:36:17] [DETAILS] resolve languages> Parsing /opt/codeql/python/codeql-extractor.yml.
+[2025-05-06 00:36:17] [DETAILS] resolve languages> Parsing /opt/codeql/java/codeql-extractor.yml.
+[2025-05-06 00:36:17] [DETAILS] resolve languages> Parsing /opt/codeql/html/codeql-extractor.yml.
+[2025-05-06 00:36:17] [DETAILS] resolve languages> Parsing /opt/codeql/xml/codeql-extractor.yml.
+[2025-05-06 00:36:17] [DETAILS] resolve languages> Parsing /opt/codeql/properties/codeql-extractor.yml.
+[2025-05-06 00:36:17] [DETAILS] resolve languages> Parsing /opt/codeql/cpp/codeql-extractor.yml.
+[2025-05-06 00:36:17] [DETAILS] resolve languages> Parsing /opt/codeql/swift/codeql-extractor.yml.
+[2025-05-06 00:36:17] [DETAILS] resolve languages> Parsing /opt/codeql/csv/codeql-extractor.yml.
+[2025-05-06 00:36:17] [DETAILS] resolve languages> Parsing /opt/codeql/actions/codeql-extractor.yml.
+[2025-05-06 00:36:17] [DETAILS] resolve languages> Parsing /opt/codeql/yaml/codeql-extractor.yml.
+[2025-05-06 00:36:17] [DETAILS] resolve languages> Parsing /opt/codeql/csharp/codeql-extractor.yml.
+[2025-05-06 00:36:17] [DETAILS] resolve languages> Parsing /opt/codeql/javascript/codeql-extractor.yml.
+[2025-05-06 00:36:17] [DETAILS] resolve languages> Parsing /opt/codeql/ruby/codeql-extractor.yml.
+[2025-05-06 00:36:18] Plumbing command codeql resolve languages completed:
+                      {
+                        "aliases" : {
+                          "c" : "cpp",
+                          "c++" : "cpp",
+                          "c-c++" : "cpp",
+                          "c-cpp" : "cpp",
+                          "c#" : "csharp",
+                          "java-kotlin" : "java",
+                          "kotlin" : "java",
+                          "javascript-typescript" : "javascript",
+                          "typescript" : "javascript"
+                        },
+                        "extractors" : {
+                          "rust" : [
+                            {
+                              "extractor_root" : "/opt/codeql/experimental/rust",
+                              "extractor_options" : {
+                                "trap" : {
+                                  "title" : "Options pertaining to TRAP.",
+                                  "description" : "Options pertaining to TRAP.",
+                                  "type" : "object",
+                                  "properties" : {
+                                    "compression" : {
+                                      "title" : "Controls compression for the TRAP files written by the extractor.",
+                                      "description" : "This option is only intended for use in debugging the extractor. Accepted values are 'gzip' (to write gzip-compressed TRAP) and 'none' (currently the default, to write uncompressed TRAP).\n",
+                                      "type" : "string",
+                                      "pattern" : "^(none|gzip)$"
+                                    }
+                                  }
+                                },
+                                "cargo_target_dir" : {
+                                  "title" : "Directory to use for cargo output files.",
+                                  "description" : "This value is an optional path to use as `CARGO_TARGET_DIR` for the internal cargo commands the extractor uses. Pointing it to a persistent directory may reduce execution time of consecutive extractor runs. By default, a new scratch directory is used for each run.\n",
+                                  "type" : "string"
+                                },
+                                "cargo_target" : {
+                                  "title" : "Target architecture",
+                                  "description" : "Target architecture to use for analysis, analogous to `cargo --target`. By default the host architecture is used.\n",
+                                  "type" : "string"
+                                },
+                                "cargo_features" : {
+                                  "title" : "Cargo features to turn on",
+                                  "description" : "Comma-separated list of features to turn on. If any value is `*` all features are turned on. By default only default cargo features are enabled. Can be repeated.\n",
+                                  "type" : "array"
+                                },
+                                "cargo_cfg_overrides" : {
+                                  "title" : "Cargo cfg overrides",
+                                  "description" : "Comma-separated list of cfg settings to enable, or disable if prefixed with `-`. Can be repeated.\n",
+                                  "type" : "array"
+                                },
+                                "logging" : {
+                                  "title" : "Options pertaining to logging.",
+                                  "description" : "Options pertaining to logging.",
+                                  "type" : "object",
+                                  "properties" : {
+                                    "verbosity" : {
+                                      "title" : "Extractor logging verbosity level.",
+                                      "description" : "Controls the level of verbosity of the extractor. The supported levels are (in order of increasing verbosity):\n  - off\n  - errors\n  - warnings\n  - info or progress\n  - debug or progress+\n  - trace or progress++\n  - progress+++\n",
+                                      "type" : "string",
+                                      "pattern" : "^(off|errors|warnings|(info|progress)|(debug|progress\\+)|(trace|progress\\+\\+)|progress\\+\\+\\+)$"
+                                    },
+                                    "flamegraph" : {
+                                      "title" : "[Experimental] File path for write flame graph log",
+                                      "description" : "Collect flame graph data using the `tracing-flame` crate. To render a flame graph or chart, run the `inferno-flamegraph` command. See also: https://crates.io/crates/tracing-flame\n",
+                                      "type" : "string"
+                                    }
+                                  }
+                                },
+                                "skip_path_resolution" : {
+                                  "title" : "Skip path resolution",
+                                  "description" : "Skip path resolution. This is experimental, while we move path resolution from the extractor to the QL library.\n",
+                                  "type" : "string"
+                                }
+                              }
+                            }
+                          ],
+                          "go" : [
+                            {
+                              "extractor_root" : "/opt/codeql/go",
+                              "extractor_options" : {
+                                "extract_tests" : {
+                                  "title" : "Whether to include Go test files in the CodeQL database.",
+                                  "description" : "A value indicating whether Go test files should be included in the CodeQL database. The default is 'false'.\n",
+                                  "type" : "string",
+                                  "pattern" : "^(false|true)$"
+                                },
+                                "extract_vendor_dirs" : {
+                                  "title" : "Whether to include Go vendor directories in the CodeQL database.",
+                                  "description" : "A value indicating whether Go vendor directories should be included in the CodeQL database. The default is 'false'.\n",
+                                  "type" : "string",
+                                  "pattern" : "^(false|true)$"
+                                }
+                              }
+                            }
+                          ],
+                          "python" : [
+                            {
+                              "extractor_root" : "/opt/codeql/python",
+                              "extractor_options" : {
+                                "logging" : {
+                                  "title" : "Options pertaining to logging.",
+                                  "description" : "Options pertaining to logging.",
+                                  "type" : "object",
+                                  "properties" : {
+                                    "verbosity" : {
+                                      "title" : "Python extractor logging verbosity level.",
+                                      "description" : "Controls the level of verbosity of the CodeQL Python extractor.\nThe supported levels are (in order of increasing verbosity):\n\n  - off\n  - errors\n  - warnings\n  - info or progress\n  - debug or progress+\n  - trace or progress++\n  - progress+++\n",
+                                      "type" : "string",
+                                      "pattern" : "^(off|errors|warnings|(info|progress)|(debug|progress\\+)|(trace|progress\\+\\+)|progress\\+\\+\\+)$"
+                                    }
+                                  }
+                                },
+                                "python_executable_name" : {
+                                  "title" : "Controls the name of the Python executable used by the Python extractor.",
+                                  "description" : "The Python extractor uses platform-dependent heuristics to determine the name of the Python executable to use. Specifying a value for this option overrides the name of the Python executable used by the extractor. Accepted values are py, python and python3. Use this setting with caution, the Python extractor requires Python 3 to run.\n",
+                                  "type" : "string",
+                                  "pattern" : "^(py|python|python3)$"
+                                }
+                              }
+                            }
+                          ],
+                          "java" : [
+                            {
+                              "extractor_root" : "/opt/codeql/java",
+                              "extractor_options" : {
+                                "exclude" : {
+                                  "title" : "A glob excluding files from analysis.",
+                                  "description" : "A glob indicating what files to exclude from the analysis. This accepts glob patterns that are supported by Java's 'getPathMatcher' implementation.\n",
+                                  "type" : "string"
+                                },
+                                "add_prefer_source" : {
+                                  "title" : "Whether to always prefer source files over class files.",
+                                  "description" : "A value indicating whether source files should be preferred over class files. If set to 'true', the extraction adds '-Xprefer:source' to the javac command line. If set to 'false', the extraction uses the default javac behavior ('-Xprefer:newer'). The default is 'true'.\n",
+                                  "type" : "string",
+                                  "pattern" : "^(false|true)$"
+                                },
+                                "buildless" : {
+                                  "title" : "Whether to use buildless (standalone) extraction (experimental).",
+                                  "description" : "A value indicating, which type of extraction the autobuilder should perform. If 'true', then the standalone extractor will be used, otherwise tracing extraction will be performed. The default is 'false'. Note that buildless extraction will generally yield less accurate analysis results, and should only be used in cases where it is not possible to build the code (for example if it uses inaccessible dependencies).\n",
+                                  "type" : "string",
+                                  "pattern" : "^(false|true)$"
+                                },
+                                "buildless_dependency_dir" : {
+                                  "title" : "The path where buildless (standalone) extraction should keep dependencies.",
+                                  "description" : "If set, the buildless (standalone) extractor will store dependencies in this directory.\n",
+                                  "type" : "string"
+                                },
+                                "minimize_dependency_jars" : {
+                                  "title" : "Whether to rewrite and minimize downloaded JAR dependencies (experimental).",
+                                  "description" : "If 'true', JAR dependencies downloaded during extraction will be rewritten to remove unneeded data, such as method bodies. The default is 'false'.\n",
+                                  "type" : "string",
+                                  "pattern" : "^(false|true)$"
+                                }
+                              }
+                            }
+                          ],
+                          "html" : [
+                            {
+                              "extractor_root" : "/opt/codeql/html"
+                            }
+                          ],
+                          "xml" : [
+                            {
+                              "extractor_root" : "/opt/codeql/xml"
+                            }
+                          ],
+                          "properties" : [
+                            {
+                              "extractor_root" : "/opt/codeql/properties"
+                            }
+                          ],
+                          "cpp" : [
+                            {
+                              "extractor_root" : "/opt/codeql/cpp",
+                              "extractor_options" : {
+                                "scale_timeouts" : {
+                                  "title" : "Value to scale compiler introspection timeouts with",
+                                  "description" : "The extractor attempts to determine what compiler the source code being extracted is compiled with. To this end the extractor makes additional calls to the compiler, some of which are expected to return within a certain fixed time (either 10s or 15s). On some systems that are under high load this time might be too short, and can be scaled up using this option.\n",
+                                  "type" : "string",
+                                  "pattern" : "[0-9]+"
+                                },
+                                "log_verbosity" : {
+                                  "title" : "Verbosity of the extractor logging",
+                                  "description" : "Set the verbosity of the extractor logging to 'quiet' (0), 'normal' (1), 'chatty' (2), or 'noisy' (3). The default is 'normal'.\n",
+                                  "type" : "string",
+                                  "pattern" : "[0-3]"
+                                }
+                              }
+                            }
+                          ],
+                          "swift" : [
+                            {
+                              "extractor_root" : "/opt/codeql/swift"
+                            }
+                          ],
+                          "csv" : [
+                            {
+                              "extractor_root" : "/opt/codeql/csv"
+                            }
+                          ],
+                          "actions" : [
+                            {
+                              "extractor_root" : "/opt/codeql/actions",
+                              "extractor_options" : { }
+                            }
+                          ],
+                          "yaml" : [
+                            {
+                              "extractor_root" : "/opt/codeql/yaml"
+                            }
+                          ],
+                          "csharp" : [
+                            {
+                              "extractor_root" : "/opt/codeql/csharp",
+                              "extractor_options" : {
+                                "trap" : {
+                                  "title" : "Options pertaining to TRAP.",
+                                  "description" : "Options pertaining to TRAP.",
+                                  "type" : "object",
+                                  "properties" : {
+                                    "compression" : {
+                                      "title" : "Controls compression for the TRAP files written by the extractor.",
+                                      "description" : "This option is only intended for use in debugging the extractor. Accepted values are 'brotli' (the default, to write brotli-compressed TRAP), 'gzip', and 'none' (to write uncompressed TRAP).\n",
+                                      "type" : "string",
+                                      "pattern" : "^(none|gzip|brotli)$"
+                                    }
+                                  }
+                                },
+                                "buildless" : {
+                                  "title" : "DEPRECATED - Whether to use buildless (standalone) extraction.",
+                                  "description" : "DEPRECATED: Use `--build-mode none` instead.\nA value indicating, which type of extraction the autobuilder should perform. If 'true', then the standalone extractor will be used, otherwise tracing extraction will be performed. The default is 'false'. Note that buildless extraction will generally yield less accurate analysis results, and should only be used in cases where it is not possible to build the code (for example if it uses inaccessible dependencies).\n",
+                                  "type" : "string",
+                                  "pattern" : "^(false|true)$"
+                                },
+                                "logging" : {
+                                  "title" : "Options pertaining to logging.",
+                                  "description" : "Options pertaining to logging.",
+                                  "type" : "object",
+                                  "properties" : {
+                                    "verbosity" : {
+                                      "title" : "Extractor logging verbosity level.",
+                                      "description" : "Controls the level of verbosity of the extractor. The supported levels are (in order of increasing verbosity):\n  - off\n  - errors\n  - warnings\n  - info or progress\n  - debug or progress+\n  - trace or progress++\n  - progress+++\n",
+                                      "type" : "string",
+                                      "pattern" : "^(off|errors|warnings|(info|progress)|(debug|progress\\+)|(trace|progress\\+\\+)|progress\\+\\+\\+)$"
+                                    }
+                                  }
+                                },
+                                "binlog" : {
+                                  "title" : "Binlog",
+                                  "description" : "[EXPERIMENTAL] The value is a path to the MsBuild binary log file that should be extracted. This option only works when `--build-mode none` is also specified.\n",
+                                  "type" : "array"
+                                }
+                              }
+                            }
+                          ],
+                          "javascript" : [
+                            {
+                              "extractor_root" : "/opt/codeql/javascript",
+                              "extractor_options" : {
+                                "skip_types" : {
+                                  "title" : "Skip type extraction for TypeScript",
+                                  "description" : "Whether to skip the extraction of types in a TypeScript application",
+                                  "type" : "string",
+                                  "pattern" : "^(false|true)$"
+                                }
+                              }
+                            }
+                          ],
+                          "ruby" : [
+                            {
+                              "extractor_root" : "/opt/codeql/ruby",
+                              "extractor_options" : {
+                                "trap" : {
+                                  "title" : "Options pertaining to TRAP.",
+                                  "description" : "Options pertaining to TRAP.",
+                                  "type" : "object",
+                                  "properties" : {
+                                    "compression" : {
+                                      "title" : "Controls compression for the TRAP files written by the extractor.",
+                                      "description" : "This option is only intended for use in debugging the extractor. Accepted values are 'gzip' (the default, to write gzip-compressed TRAP) and 'none' (to write uncompressed TRAP).\n",
+                                      "type" : "string",
+                                      "pattern" : "^(none|gzip)$"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+[2025-05-06 00:36:18] [PROGRESS] database init> Calculating baseline information in /Users/vishruthvs/Projects/aem-guides-wknd
+[2025-05-06 00:36:18] [SPAMMY] database init> Ignoring the following directories when processing baseline information: .git, .hg, .svn.
+[2025-05-06 00:36:18] [DETAILS] database init> Running command in /Users/vishruthvs/Projects/aem-guides-wknd: /opt/codeql/tools/osx64/scc --by-file --exclude-dir .git,.hg,.svn --format json --no-large --no-min .
+[2025-05-06 00:36:18] Using configure-baseline script /opt/codeql/javascript/tools/configure-baseline.sh.
+[2025-05-06 00:36:18] [PROGRESS] database init> Running command in /Users/vishruthvs/Projects/aem-guides-wknd: [/opt/codeql/javascript/tools/configure-baseline.sh]
+[2025-05-06 00:36:18] [SPAMMY] database init> Found 48 baseline files for javascript.
+[2025-05-06 00:36:18] [SPAMMY] database init> Found 15 baseline files for java.
+[2025-05-06 00:36:18] [PROGRESS] database init> Calculated baseline information for languages: java, javascript (117ms).
+[2025-05-06 00:36:18] [PROGRESS] database init> Resolving extractor javascript.
+[2025-05-06 00:36:18] [DETAILS] database init> Found candidate extractor root for javascript: /opt/codeql/javascript.
+[2025-05-06 00:36:18] [PROGRESS] database init> Successfully loaded extractor JavaScript/TypeScript (javascript) from /opt/codeql/javascript.
+[2025-05-06 00:36:18] [SPAMMY] database init> Determining macOS System Integrity Protection status...
+[2025-05-06 00:36:18] [SPAMMY] database init> Running command [/usr/bin/csrutil, status].
+[2025-05-06 00:36:18] [SPAMMY] database init> SIP is enabled.
+[2025-05-06 00:36:18] [PROGRESS] database init> Created skeleton CodeQL database at /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db. This in-progress database is ready to be populated by an extractor.
+[2025-05-06 00:36:18] Plumbing command codeql database init completed.
+[2025-05-06 00:36:18] [PROGRESS] database create> Running build command: []
+[2025-05-06 00:36:18] Running plumbing command: codeql database trace-command --working-dir=/Users/vishruthvs/Projects/aem-guides-wknd --index-traceless-dbs --no-db-cluster -- /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db
+[2025-05-06 00:36:18] Using autobuild script /opt/codeql/javascript/tools/autobuild.sh.
+[2025-05-06 00:36:18] [PROGRESS] database trace-command> Running command in /Users/vishruthvs/Projects/aem-guides-wknd: [/opt/codeql/javascript/tools/autobuild.sh]
+[2025-05-06 00:36:18] [build-stdout] Single-threaded extraction.
+[2025-05-06 00:36:18] [build-stdout] ui.tests/test-module/package.json: Main file not found
+[2025-05-06 00:36:18] [build-stdout] ui.frontend/package.json: Main file set to ui.frontend/src/main/webpack/site/main.js
+[2025-05-06 00:36:18] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/form/sign-in-buttons/sign-in-buttons.html
+[2025-05-06 00:36:18] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/form/sign-in-buttons/sign-in-buttons.html (64 ms)
+[2025-05-06 00:36:18] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/form/sign-in-form/sign-in-form.html
+[2025-05-06 00:36:18] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/form/sign-in-form/sign-in-form.html (4 ms)
+[2025-05-06 00:36:18] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/byline/byline.html
+[2025-05-06 00:36:18] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/byline/byline.html (2 ms)
+[2025-05-06 00:36:18] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/helloworld/helloworld.html
+[2025-05-06 00:36:18] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/helloworld/helloworld.html (2 ms)
+[2025-05-06 00:36:18] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/image-list/image-list.html
+[2025-05-06 00:36:18] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/image-list/image-list.html (2 ms)
+[2025-05-06 00:36:18] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/image-list/item.html
+[2025-05-06 00:36:18] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/image-list/item.html (2 ms)
+[2025-05-06 00:36:18] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/languagenavigation/itemContent.html
+[2025-05-06 00:36:18] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/languagenavigation/itemContent.html (2 ms)
+[2025-05-06 00:36:18] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/page/customfooterlibs.html
+[2025-05-06 00:36:18] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/page/customfooterlibs.html (2 ms)
+[2025-05-06 00:36:18] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/page/customheaderlibs.html
+[2025-05-06 00:36:18] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/page/customheaderlibs.html (2 ms)
+[2025-05-06 00:36:18] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/page/favicons.html
+[2025-05-06 00:36:18] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/page/favicons.html (4 ms)
+[2025-05-06 00:36:18] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/xfpage/content.html
+[2025-05-06 00:36:18] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/xfpage/content.html (2 ms)
+[2025-05-06 00:36:18] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/xfpage/customfooterlibs.html
+[2025-05-06 00:36:18] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/xfpage/customfooterlibs.html (1 ms)
+[2025-05-06 00:36:18] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/xfpage/customheaderlibs.html
+[2025-05-06 00:36:18] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.apps/src/main/content/jcr_root/apps/wknd/components/xfpage/customheaderlibs.html (1 ms)
+[2025-05-06 00:36:18] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/static/index.html
+[2025-05-06 00:36:18] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/static/index.html (128 ms)
+[2025-05-06 00:36:19] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/dashboard-template.html
+[2025-05-06 00:36:19] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/dashboard-template.html (55 ms)
+[2025-05-06 00:36:19] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/docs/index.html
+[2025-05-06 00:36:19] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/docs/index.html (3 ms)
+[2025-05-06 00:36:19] [build-stdout] Found Node.js at: node
+[2025-05-06 00:36:19] [build-stdout] Found Node.js version: v22.11.0
+[2025-05-06 00:36:19] [build-stdout] Opening project /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/tsconfig.json
+[2025-05-06 00:36:19] [build-stdout] Memory for TypeScript process: 2000 MB, and 400 MB reserve
+[2025-05-06 00:36:20] [build-stdout] Done opening project /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/tsconfig.json (891 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/components/helloworld/ts/helloworld.ts
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/components/helloworld/ts/helloworld.ts (21 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/components/contentfragment/js/contributor.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/components/contentfragment/js/contributor.js (17 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/components/form/sign-in-buttons/sign-in-buttons.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/components/form/sign-in-buttons/sign-in-buttons.js (8 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/components/form/sign-in-form/sign-in-form.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/components/form/sign-in-form/sign-in-form.js (7 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/components/helloworld/VulnerableComponent.jsx
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/components/helloworld/VulnerableComponent.jsx (29 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/components/languagenavigation/languagenavigation.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/components/languagenavigation/languagenavigation.js (12 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/components/layout-container/modal.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/components/layout-container/modal.js (10 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/components/navigation/navigation.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/components/navigation/navigation.js (11 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/resources/manifest.json
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/resources/manifest.json (3 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/site/main.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/site/main.js (3 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/site/scroll-indicator.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/site/scroll-indicator.js (4 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/site/util.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/site/util.js (60 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/site/vendors.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/src/main/webpack/site/vendors.js (1 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.tests/test-module/cypress/e2e/authoring.cy.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.tests/test-module/cypress/e2e/authoring.cy.js (13 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.tests/test-module/cypress/e2e/publicsite.cy.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.tests/test-module/cypress/e2e/publicsite.cy.js (6 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.tests/test-module/cypress/support/aem.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.tests/test-module/cypress/support/aem.js (42 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.tests/test-module/cypress/support/e2e.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.tests/test-module/cypress/support/e2e.js (2 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.tests/test-module/cypress/support/wknd.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.tests/test-module/cypress/support/wknd.js (8 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/sarif-to-dashboard.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/.github/codeql/sarif-to-dashboard.js (26 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/codeql-analysis.yml
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/codeql-analysis.yml (21 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/deploy-github-pages.yml
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/deploy-github-pages.yml (4 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/deploy-to-wknd-prod.yml
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/deploy-to-wknd-prod.yml (2 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/maven-release.yml
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/maven-release.yml (4 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/maven.yml
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/maven.yml (2 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/prbuild.yml
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/prbuild.yml (4 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/accordion.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/accordion.stories.js (7 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/breadcrumb.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/breadcrumb.stories.js (4 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/button.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/button.stories.js (8 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/byline.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/byline.stories.js (3 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/carousel.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/carousel.stories.js (8 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/contentfragment.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/contentfragment.stories.js (5 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/download.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/download.stories.js (4 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/elements.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/elements.stories.js (5 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/image-list.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/image-list.stories.js (4 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/image.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/image.stories.js (4 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/languagenavigation.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/languagenavigation.stories.js (5 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/layout-container.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/layout-container.stories.js (7 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/list.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/list.stories.js (4 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/navigation.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/navigation.stories.js (4 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/search.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/search.stories.js (4 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/separator.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/separator.stories.js (5 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/tabs.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/tabs.stories.js (6 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/teaser.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/teaser.stories.js (8 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/text.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/text.stories.js (6 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/title.stories.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/stories/title.stories.js (4 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.tests/test-module/.eslintrc.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.tests/test-module/.eslintrc.js (2 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.tests/test-module/cypress.config.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.tests/test-module/cypress.config.js (5 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.tests/test-module/package.json
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.tests/test-module/package.json (1 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.tests/test-module/reporter.config.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.tests/test-module/reporter.config.js (1 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/config/cdn.yaml
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/config/cdn.yaml (4 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/.eslintrc.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/.eslintrc.js (3 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/clientlib.config.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/clientlib.config.js (6 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/package.json
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/package.json (1 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/tsconfig.json
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/tsconfig.json (0 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/webpack.common.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/webpack.common.js (10 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/webpack.dev.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/webpack.dev.js (4 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/webpack.prod.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /Users/vishruthvs/Projects/aem-guides-wknd/ui.frontend/webpack.prod.js (4 ms)
+[2025-05-06 00:36:20] [build-stderr] No externs trap cache found
+[2025-05-06 00:36:20] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/constants.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/constants.js (91 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/net.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/net.js (32 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/globals.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/globals.js (108 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/events.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/events.js (8 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/repl.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/repl.js (7 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/util.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/util.js (17 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/dgram.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/dgram.js (13 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/vm.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/vm.js (12 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/stream.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/stream.js (46 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/child_process.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/child_process.js (43 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/assert.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/assert.js (8 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/os.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/os.js (14 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/console.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/console.js (2 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/readline.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/readline.js (13 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/punycode.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/punycode.js (5 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/https.js
+[2025-05-06 00:36:20] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/https.js (12 ms)
+[2025-05-06 00:36:20] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/domain.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/domain.js (6 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/dns.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/dns.js (17 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/assert_legacy.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/assert_legacy.js (2 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/tty.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/tty.js (6 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/timers.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/timers.js (7 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/querystring.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/querystring.js (7 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/module.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/module.js (5 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/sys.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/sys.js (2 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/path.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/path.js (18 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/string_decoder.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/string_decoder.js (4 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/cluster.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/cluster.js (55 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/v8.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/v8.js (6 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/crypto.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/crypto.js (49 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/zlib.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/zlib.js (25 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/url.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/url.js (6 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/tls.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/tls.js (29 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/process.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/process.js (2 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/http.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/http.js (30 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/buffer.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/buffer.js (7 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/nodejs/fs.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/nodejs/fs.js (91 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/ie_dom.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/ie_dom.js (48 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/mediasource.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/mediasource.js (8 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/html5.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/html5.js (160 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_anim_timing.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_anim_timing.js (5 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_dom3.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_dom3.js (30 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/fetchapi.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/fetchapi.js (20 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/streamsapi.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/streamsapi.js (19 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/fileapi.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/fileapi.js (36 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_navigation_timing.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_navigation_timing.js (13 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_range.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_range.js (10 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_indexeddb.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_indexeddb.js (30 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_dom2.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_dom2.js (79 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_elementtraversal.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_elementtraversal.js (3 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_webcrypto.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_webcrypto.js (15 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/ie_vml.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/ie_vml.js (3 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/intl.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/intl.js (9 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_rtc.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_rtc.js (78 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_requestidlecallback.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_requestidlecallback.js (3 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_geolocation.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_geolocation.js (5 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/webstorage.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/webstorage.js (5 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/webkit_usercontent.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/webkit_usercontent.js (7 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/window.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/window.js (22 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/page_visibility.js
+[2025-05-06 00:36:21] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/page_visibility.js (1 ms)
+[2025-05-06 00:36:21] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/webgl.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/webgl.js (125 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_touch_event.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_touch_event.js (10 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_event.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_event.js (22 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/whatwg_encoding.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/whatwg_encoding.js (3 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_event3.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_event3.js (3 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/gecko_xml.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/gecko_xml.js (2 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/ie_event.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/ie_event.js (12 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_css.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_css.js (71 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/ie_css.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/ie_css.js (10 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/webkit_css.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/webkit_css.js (48 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_xml.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_xml.js (14 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/gecko_css.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/gecko_css.js (11 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/iphone.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/iphone.js (6 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_selectors.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_selectors.js (5 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/chrome.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/chrome.js (22 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_batterystatus.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_batterystatus.js (2 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/webkit_notifications.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/webkit_notifications.js (9 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_screen_orientation.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_screen_orientation.js (2 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_midi.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_midi.js (10 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_serviceworker.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_serviceworker.js (23 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_device_sensor_event.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_device_sensor_event.js (4 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/webkit_event.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/webkit_event.js (2 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_permissions.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_permissions.js (3 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_gamepad.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_gamepad.js (4 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_dom1.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_dom1.js (36 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/url.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/url.js (6 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/gecko_event.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/gecko_event.js (5 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_encoding.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_encoding.js (2 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/flash.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/flash.js (9 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_pointer_events.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_pointer_events.js (4 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/gecko_ext.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/gecko_ext.js (1 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/gecko_dom.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/gecko_dom.js (30 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/webkit_dom.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/webkit_dom.js (13 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_css3d.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_css3d.js (7 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/web/w3c_dom4.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/web/w3c_dom4.js (1 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/vm/rhino.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/vm/rhino.js (4 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/vm/v8.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/vm/v8.js (5 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/vm/spidermonkey.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/vm/spidermonkey.js (1 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/vm/jsshell.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/vm/jsshell.js (25 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/lib/jquery-3.2.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/lib/jquery-3.2.js (101 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/lib/bdd.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/lib/bdd.js (4 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/lib/should.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/lib/should.js (11 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/lib/vows.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/lib/vows.js (13 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/es/proxy.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/es/proxy.js (1 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/es/es5.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/es/es5.js (9 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/es/intl.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/es/intl.js (9 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/es/es6_collections.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/es/es6_collections.js (9 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/es/es6.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/es/es6.js (55 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/es/es2017.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/es/es2017.js (2 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/es/es3.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/es/es3.js (74 ms)
+[2025-05-06 00:36:22] [build-stdout] Extracting /opt/codeql/javascript/tools/data/externs/es/es2016.js
+[2025-05-06 00:36:22] [build-stdout] Done extracting /opt/codeql/javascript/tools/data/externs/es/es2016.js (1 ms)
+[2025-05-06 00:36:22] Plumbing command codeql database trace-command completed.
+[2025-05-06 00:36:22] [PROGRESS] database create> Finalizing database at /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db.
+[2025-05-06 00:36:22] Running plumbing command: codeql database finalize --no-db-cluster -- /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db
+[2025-05-06 00:36:22] [PROGRESS] database finalize> Running TRAP import for CodeQL database at /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db...
+[2025-05-06 00:36:22] Running plumbing command: codeql dataset import --dbscheme=/opt/codeql/javascript/semmlecode.javascript.dbscheme -- /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/db-javascript /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/trap/javascript
+[2025-05-06 00:36:23] Clearing disk cache since the version file /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/db-javascript/default/cache/version does not exist
+[2025-05-06 00:36:23] Tuple pool not found. Clearing relations with cached strings
+[2025-05-06 00:36:23] Trimming disk cache at /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/db-javascript/default/cache in mode clear.
+[2025-05-06 00:36:23] Sequence stamp origin is -6052845943574209297
+[2025-05-06 00:36:23] Pausing evaluation to hard-clear memory at sequence stamp o+0
+[2025-05-06 00:36:23] Unpausing evaluation
+[2025-05-06 00:36:23] Pausing evaluation to quickly trim disk at sequence stamp o+1
+[2025-05-06 00:36:23] Unpausing evaluation
+[2025-05-06 00:36:23] Pausing evaluation to zealously trim disk at sequence stamp o+2
+[2025-05-06 00:36:23] Unpausing evaluation
+[2025-05-06 00:36:23] Trimming completed (4ms): Purged everything.
+[2025-05-06 00:36:23] Scanning for files in /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/trap/javascript
+[2025-05-06 00:36:23] Found 185 TRAP files (9.39 MiB)
+[2025-05-06 00:36:23] [PROGRESS] dataset import> Importing TRAP files
+[2025-05-06 00:36:23] Importing dashboard-template.html.trap.gz (1 of 185)
+[2025-05-06 00:36:23] Importing sarif-to-dashboard.js.trap.gz (2 of 185)
+[2025-05-06 00:36:23] Importing codeql-analysis.yml.trap.gz (3 of 185)
+[2025-05-06 00:36:23] Importing deploy-github-pages.yml.trap.gz (4 of 185)
+[2025-05-06 00:36:23] Importing deploy-to-wknd-prod.yml.trap.gz (5 of 185)
+[2025-05-06 00:36:23] Importing maven-release.yml.trap.gz (6 of 185)
+[2025-05-06 00:36:23] Importing maven.yml.trap.gz (7 of 185)
+[2025-05-06 00:36:23] Importing prbuild.yml.trap.gz (8 of 185)
+[2025-05-06 00:36:23] Importing cdn.yaml.trap.gz (9 of 185)
+[2025-05-06 00:36:23] Importing index.html.trap.gz (10 of 185)
+[2025-05-06 00:36:23] Importing byline.html.trap.gz (11 of 185)
+[2025-05-06 00:36:23] Importing sign-in-buttons.html.trap.gz (12 of 185)
+[2025-05-06 00:36:23] Importing sign-in-form.html.trap.gz (13 of 185)
+[2025-05-06 00:36:23] Importing helloworld.html.trap.gz (14 of 185)
+[2025-05-06 00:36:23] Importing image-list.html.trap.gz (15 of 185)
+[2025-05-06 00:36:23] Importing item.html.trap.gz (16 of 185)
+[2025-05-06 00:36:23] Importing itemContent.html.trap.gz (17 of 185)
+[2025-05-06 00:36:23] Importing customfooterlibs.html.trap.gz (18 of 185)
+[2025-05-06 00:36:23] Importing customheaderlibs.html.trap.gz (19 of 185)
+[2025-05-06 00:36:23] Importing favicons.html.trap.gz (20 of 185)
+[2025-05-06 00:36:23] Importing content.html.trap.gz (21 of 185)
+[2025-05-06 00:36:23] Importing customfooterlibs.html.trap.gz (22 of 185)
+[2025-05-06 00:36:23] Importing customheaderlibs.html.trap.gz (23 of 185)
+[2025-05-06 00:36:23] Importing .eslintrc.js.trap.gz (24 of 185)
+[2025-05-06 00:36:23] Importing clientlib.config.js.trap.gz (25 of 185)
+[2025-05-06 00:36:23] Importing package.json.trap.gz (26 of 185)
+[2025-05-06 00:36:23] Importing contributor.js.trap.gz (27 of 185)
+[2025-05-06 00:36:23] Importing sign-in-buttons.js.trap.gz (28 of 185)
+[2025-05-06 00:36:23] Importing sign-in-form.js.trap.gz (29 of 185)
+[2025-05-06 00:36:23] Importing VulnerableComponent.jsx.trap.gz (30 of 185)
+[2025-05-06 00:36:23] Importing helloworld.ts.trap.gz (31 of 185)
+[2025-05-06 00:36:23] Importing languagenavigation.js.trap.gz (32 of 185)
+[2025-05-06 00:36:23] Importing modal.js.trap.gz (33 of 185)
+[2025-05-06 00:36:23] Importing navigation.js.trap.gz (34 of 185)
+[2025-05-06 00:36:23] Importing manifest.json.trap.gz (35 of 185)
+[2025-05-06 00:36:23] Importing main.js.trap.gz (36 of 185)
+[2025-05-06 00:36:23] Importing scroll-indicator.js.trap.gz (37 of 185)
+[2025-05-06 00:36:23] Importing util.js.trap.gz (38 of 185)
+[2025-05-06 00:36:23] Importing vendors.js.trap.gz (39 of 185)
+[2025-05-06 00:36:23] Importing index.html.trap.gz (40 of 185)
+[2025-05-06 00:36:23] Importing accordion.stories.js.trap.gz (41 of 185)
+[2025-05-06 00:36:23] Importing breadcrumb.stories.js.trap.gz (42 of 185)
+[2025-05-06 00:36:23] Importing button.stories.js.trap.gz (43 of 185)
+[2025-05-06 00:36:23] Importing byline.stories.js.trap.gz (44 of 185)
+[2025-05-06 00:36:23] Importing carousel.stories.js.trap.gz (45 of 185)
+[2025-05-06 00:36:23] Importing contentfragment.stories.js.trap.gz (46 of 185)
+[2025-05-06 00:36:23] Importing download.stories.js.trap.gz (47 of 185)
+[2025-05-06 00:36:23] Importing elements.stories.js.trap.gz (48 of 185)
+[2025-05-06 00:36:23] Importing image-list.stories.js.trap.gz (49 of 185)
+[2025-05-06 00:36:23] Importing image.stories.js.trap.gz (50 of 185)
+[2025-05-06 00:36:23] Importing languagenavigation.stories.js.trap.gz (51 of 185)
+[2025-05-06 00:36:23] Importing layout-container.stories.js.trap.gz (52 of 185)
+[2025-05-06 00:36:23] Importing list.stories.js.trap.gz (53 of 185)
+[2025-05-06 00:36:23] Importing navigation.stories.js.trap.gz (54 of 185)
+[2025-05-06 00:36:23] Importing search.stories.js.trap.gz (55 of 185)
+[2025-05-06 00:36:23] Importing separator.stories.js.trap.gz (56 of 185)
+[2025-05-06 00:36:23] Importing tabs.stories.js.trap.gz (57 of 185)
+[2025-05-06 00:36:23] Importing teaser.stories.js.trap.gz (58 of 185)
+[2025-05-06 00:36:23] Importing text.stories.js.trap.gz (59 of 185)
+[2025-05-06 00:36:23] Importing title.stories.js.trap.gz (60 of 185)
+[2025-05-06 00:36:23] Importing tsconfig.json.codeql-typescript-typetable.trap.gz (61 of 185)
+[2025-05-06 00:36:23] Importing tsconfig.json.trap.gz (62 of 185)
+[2025-05-06 00:36:23] Importing webpack.common.js.trap.gz (63 of 185)
+[2025-05-06 00:36:23] Importing webpack.dev.js.trap.gz (64 of 185)
+[2025-05-06 00:36:23] Importing webpack.prod.js.trap.gz (65 of 185)
+[2025-05-06 00:36:23] Importing .eslintrc.js.trap.gz (66 of 185)
+[2025-05-06 00:36:23] Importing authoring.cy.js.trap.gz (67 of 185)
+[2025-05-06 00:36:23] Importing publicsite.cy.js.trap.gz (68 of 185)
+[2025-05-06 00:36:23] Importing aem.js.trap.gz (69 of 185)
+[2025-05-06 00:36:23] Importing e2e.js.trap.gz (70 of 185)
+[2025-05-06 00:36:23] Importing wknd.js.trap.gz (71 of 185)
+[2025-05-06 00:36:23] Importing cypress.config.js.trap.gz (72 of 185)
+[2025-05-06 00:36:23] Importing package.json.trap.gz (73 of 185)
+[2025-05-06 00:36:23] Importing reporter.config.js.trap.gz (74 of 185)
+[2025-05-06 00:36:23] Importing metadata.trap.gz (75 of 185)
+[2025-05-06 00:36:23] Importing es2016.js.trap.gz (76 of 185)
+[2025-05-06 00:36:23] Importing es2017.js.trap.gz (77 of 185)
+[2025-05-06 00:36:23] Importing es3.js.trap.gz (78 of 185)
+[2025-05-06 00:36:23] Importing es5.js.trap.gz (79 of 185)
+[2025-05-06 00:36:23] Importing es6.js.trap.gz (80 of 185)
+[2025-05-06 00:36:23] Importing es6_collections.js.trap.gz (81 of 185)
+[2025-05-06 00:36:23] Importing intl.js.trap.gz (82 of 185)
+[2025-05-06 00:36:23] Importing proxy.js.trap.gz (83 of 185)
+[2025-05-06 00:36:23] Importing bdd.js.trap.gz (84 of 185)
+[2025-05-06 00:36:23] Importing jquery-3.2.js.trap.gz (85 of 185)
+[2025-05-06 00:36:23] Importing should.js.trap.gz (86 of 185)
+[2025-05-06 00:36:23] Importing vows.js.trap.gz (87 of 185)
+[2025-05-06 00:36:23] Importing assert.js.trap.gz (88 of 185)
+[2025-05-06 00:36:23] Importing assert_legacy.js.trap.gz (89 of 185)
+[2025-05-06 00:36:23] Importing buffer.js.trap.gz (90 of 185)
+[2025-05-06 00:36:23] Importing child_process.js.trap.gz (91 of 185)
+[2025-05-06 00:36:23] Importing cluster.js.trap.gz (92 of 185)
+[2025-05-06 00:36:23] Importing console.js.trap.gz (93 of 185)
+[2025-05-06 00:36:23] Importing constants.js.trap.gz (94 of 185)
+[2025-05-06 00:36:23] Importing crypto.js.trap.gz (95 of 185)
+[2025-05-06 00:36:23] Importing dgram.js.trap.gz (96 of 185)
+[2025-05-06 00:36:23] Importing dns.js.trap.gz (97 of 185)
+[2025-05-06 00:36:23] Importing domain.js.trap.gz (98 of 185)
+[2025-05-06 00:36:23] Importing events.js.trap.gz (99 of 185)
+[2025-05-06 00:36:23] Importing fs.js.trap.gz (100 of 185)
+[2025-05-06 00:36:23] Importing globals.js.trap.gz (101 of 185)
+[2025-05-06 00:36:23] Importing http.js.trap.gz (102 of 185)
+[2025-05-06 00:36:23] Importing https.js.trap.gz (103 of 185)
+[2025-05-06 00:36:23] Importing module.js.trap.gz (104 of 185)
+[2025-05-06 00:36:23] Importing net.js.trap.gz (105 of 185)
+[2025-05-06 00:36:23] Importing os.js.trap.gz (106 of 185)
+[2025-05-06 00:36:23] Importing path.js.trap.gz (107 of 185)
+[2025-05-06 00:36:23] Importing process.js.trap.gz (108 of 185)
+[2025-05-06 00:36:23] Importing punycode.js.trap.gz (109 of 185)
+[2025-05-06 00:36:23] Importing querystring.js.trap.gz (110 of 185)
+[2025-05-06 00:36:23] Importing readline.js.trap.gz (111 of 185)
+[2025-05-06 00:36:23] Importing repl.js.trap.gz (112 of 185)
+[2025-05-06 00:36:23] Importing stream.js.trap.gz (113 of 185)
+[2025-05-06 00:36:23] Importing string_decoder.js.trap.gz (114 of 185)
+[2025-05-06 00:36:23] Importing sys.js.trap.gz (115 of 185)
+[2025-05-06 00:36:23] Importing timers.js.trap.gz (116 of 185)
+[2025-05-06 00:36:23] Importing tls.js.trap.gz (117 of 185)
+[2025-05-06 00:36:24] Importing tty.js.trap.gz (118 of 185)
+[2025-05-06 00:36:24] Importing url.js.trap.gz (119 of 185)
+[2025-05-06 00:36:24] Importing util.js.trap.gz (120 of 185)
+[2025-05-06 00:36:24] Importing v8.js.trap.gz (121 of 185)
+[2025-05-06 00:36:24] Importing vm.js.trap.gz (122 of 185)
+[2025-05-06 00:36:24] Importing zlib.js.trap.gz (123 of 185)
+[2025-05-06 00:36:24] Importing jsshell.js.trap.gz (124 of 185)
+[2025-05-06 00:36:24] Importing rhino.js.trap.gz (125 of 185)
+[2025-05-06 00:36:24] Importing spidermonkey.js.trap.gz (126 of 185)
+[2025-05-06 00:36:24] Importing v8.js.trap.gz (127 of 185)
+[2025-05-06 00:36:24] Importing chrome.js.trap.gz (128 of 185)
+[2025-05-06 00:36:24] Importing fetchapi.js.trap.gz (129 of 185)
+[2025-05-06 00:36:24] Importing fileapi.js.trap.gz (130 of 185)
+[2025-05-06 00:36:24] Importing flash.js.trap.gz (131 of 185)
+[2025-05-06 00:36:24] Importing gecko_css.js.trap.gz (132 of 185)
+[2025-05-06 00:36:24] Importing gecko_dom.js.trap.gz (133 of 185)
+[2025-05-06 00:36:24] Importing gecko_event.js.trap.gz (134 of 185)
+[2025-05-06 00:36:24] Importing gecko_ext.js.trap.gz (135 of 185)
+[2025-05-06 00:36:24] Importing gecko_xml.js.trap.gz (136 of 185)
+[2025-05-06 00:36:24] Importing html5.js.trap.gz (137 of 185)
+[2025-05-06 00:36:24] Importing ie_css.js.trap.gz (138 of 185)
+[2025-05-06 00:36:24] Importing ie_dom.js.trap.gz (139 of 185)
+[2025-05-06 00:36:24] Importing ie_event.js.trap.gz (140 of 185)
+[2025-05-06 00:36:24] Importing ie_vml.js.trap.gz (141 of 185)
+[2025-05-06 00:36:24] Importing intl.js.trap.gz (142 of 185)
+[2025-05-06 00:36:24] Importing iphone.js.trap.gz (143 of 185)
+[2025-05-06 00:36:24] Importing mediasource.js.trap.gz (144 of 185)
+[2025-05-06 00:36:24] Importing page_visibility.js.trap.gz (145 of 185)
+[2025-05-06 00:36:24] Importing streamsapi.js.trap.gz (146 of 185)
+[2025-05-06 00:36:24] Importing url.js.trap.gz (147 of 185)
+[2025-05-06 00:36:24] Importing w3c_anim_timing.js.trap.gz (148 of 185)
+[2025-05-06 00:36:24] Importing w3c_batterystatus.js.trap.gz (149 of 185)
+[2025-05-06 00:36:24] Importing w3c_css.js.trap.gz (150 of 185)
+[2025-05-06 00:36:24] Importing w3c_css3d.js.trap.gz (151 of 185)
+[2025-05-06 00:36:24] Importing w3c_device_sensor_event.js.trap.gz (152 of 185)
+[2025-05-06 00:36:24] Importing w3c_dom1.js.trap.gz (153 of 185)
+[2025-05-06 00:36:24] Importing w3c_dom2.js.trap.gz (154 of 185)
+[2025-05-06 00:36:24] Importing w3c_dom3.js.trap.gz (155 of 185)
+[2025-05-06 00:36:24] Importing w3c_dom4.js.trap.gz (156 of 185)
+[2025-05-06 00:36:24] Importing w3c_elementtraversal.js.trap.gz (157 of 185)
+[2025-05-06 00:36:24] Importing w3c_encoding.js.trap.gz (158 of 185)
+[2025-05-06 00:36:24] Importing w3c_event.js.trap.gz (159 of 185)
+[2025-05-06 00:36:24] Importing w3c_event3.js.trap.gz (160 of 185)
+[2025-05-06 00:36:24] Importing w3c_gamepad.js.trap.gz (161 of 185)
+[2025-05-06 00:36:24] Importing w3c_geolocation.js.trap.gz (162 of 185)
+[2025-05-06 00:36:24] Importing w3c_indexeddb.js.trap.gz (163 of 185)
+[2025-05-06 00:36:24] Importing w3c_midi.js.trap.gz (164 of 185)
+[2025-05-06 00:36:24] Importing w3c_navigation_timing.js.trap.gz (165 of 185)
+[2025-05-06 00:36:24] Importing w3c_permissions.js.trap.gz (166 of 185)
+[2025-05-06 00:36:24] Importing w3c_pointer_events.js.trap.gz (167 of 185)
+[2025-05-06 00:36:24] Importing w3c_range.js.trap.gz (168 of 185)
+[2025-05-06 00:36:24] Importing w3c_requestidlecallback.js.trap.gz (169 of 185)
+[2025-05-06 00:36:24] Importing w3c_rtc.js.trap.gz (170 of 185)
+[2025-05-06 00:36:24] Importing w3c_screen_orientation.js.trap.gz (171 of 185)
+[2025-05-06 00:36:24] Importing w3c_selectors.js.trap.gz (172 of 185)
+[2025-05-06 00:36:24] Importing w3c_serviceworker.js.trap.gz (173 of 185)
+[2025-05-06 00:36:24] Importing w3c_touch_event.js.trap.gz (174 of 185)
+[2025-05-06 00:36:24] Importing w3c_webcrypto.js.trap.gz (175 of 185)
+[2025-05-06 00:36:24] Importing w3c_xml.js.trap.gz (176 of 185)
+[2025-05-06 00:36:24] Importing webgl.js.trap.gz (177 of 185)
+[2025-05-06 00:36:24] Importing webkit_css.js.trap.gz (178 of 185)
+[2025-05-06 00:36:24] Importing webkit_dom.js.trap.gz (179 of 185)
+[2025-05-06 00:36:24] Importing webkit_event.js.trap.gz (180 of 185)
+[2025-05-06 00:36:24] Importing webkit_notifications.js.trap.gz (181 of 185)
+[2025-05-06 00:36:24] Importing webkit_usercontent.js.trap.gz (182 of 185)
+[2025-05-06 00:36:24] Importing webstorage.js.trap.gz (183 of 185)
+[2025-05-06 00:36:24] Importing whatwg_encoding.js.trap.gz (184 of 185)
+[2025-05-06 00:36:24] Importing window.js.trap.gz (185 of 185)
+[2025-05-06 00:36:24] [PROGRESS] dataset import> Merging relations
+[2025-05-06 00:36:24] Merging 1 fragment for 'files'.
+[2025-05-06 00:36:24] Merged 642 bytes for 'files'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'folders'.
+[2025-05-06 00:36:24] Merged 190 bytes for 'folders'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'containerparent'.
+[2025-05-06 00:36:24] Merged 613 bytes for 'containerparent'.
+[2025-05-06 00:36:24] Merging 3 fragments for 'locations_default'.
+[2025-05-06 00:36:24] Merged 919207 bytes (897.66 KiB) for 'locations_default'.
+[2025-05-06 00:36:24] Merging 3 fragments for 'hasLocation'.
+[2025-05-06 00:36:24] Merged 577474 bytes (563.94 KiB) for 'hasLocation'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'extraction_data'.
+[2025-05-06 00:36:24] Merged 784 bytes for 'extraction_data'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'scopes'.
+[2025-05-06 00:36:24] Merged 4770 bytes (4.66 KiB) for 'scopes'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'comments'.
+[2025-05-06 00:36:24] Merged 38249 bytes (37.35 KiB) for 'comments'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'indentation'.
+[2025-05-06 00:36:24] Merged 32267 bytes (31.51 KiB) for 'indentation'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'numlines'.
+[2025-05-06 00:36:24] Merged 2180 bytes (2.13 KiB) for 'numlines'.
+[2025-05-06 00:36:24] Merging 2 fragments for 'tokeninfo'.
+[2025-05-06 00:36:24] Merged 523691 bytes (511.42 KiB) for 'tokeninfo'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'next_token'.
+[2025-05-06 00:36:24] Merged 20946 bytes (20.46 KiB) for 'next_token'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'toplevels'.
+[2025-05-06 00:36:24] Merged 329 bytes for 'toplevels'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'variables'.
+[2025-05-06 00:36:24] Merged 44632 bytes (43.59 KiB) for 'variables'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'stmts'.
+[2025-05-06 00:36:24] Merged 112692 bytes (110.05 KiB) for 'stmts'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'stmt_containers'.
+[2025-05-06 00:36:24] Merged 49083 bytes (47.93 KiB) for 'stmt_containers'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'exprs'.
+[2025-05-06 00:36:24] Merged 472073 bytes (461.01 KiB) for 'exprs'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'enclosing_stmt'.
+[2025-05-06 00:36:24] Merged 93991 bytes (91.79 KiB) for 'enclosing_stmt'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'expr_containers'.
+[2025-05-06 00:36:24] Merged 102938 bytes (100.53 KiB) for 'expr_containers'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'literals'.
+[2025-05-06 00:36:24] Merged 82544 bytes (80.61 KiB) for 'literals'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'decl'.
+[2025-05-06 00:36:24] Merged 14380 bytes (14.04 KiB) for 'decl'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'properties'.
+[2025-05-06 00:36:24] Merged 2631 bytes (2.57 KiB) for 'properties'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'regexpterm'.
+[2025-05-06 00:36:24] Merged 11898 bytes (11.62 KiB) for 'regexpterm'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'regexp_const_value'.
+[2025-05-06 00:36:24] Merged 4672 bytes (4.56 KiB) for 'regexp_const_value'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'array_size'.
+[2025-05-06 00:36:24] Merged 150 bytes for 'array_size'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'bind'.
+[2025-05-06 00:36:24] Merged 17573 bytes (17.16 KiB) for 'bind'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'scopenodes'.
+[2025-05-06 00:36:24] Merged 9187 bytes (8.97 KiB) for 'scopenodes'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'scopenesting'.
+[2025-05-06 00:36:24] Merged 5358 bytes (5.23 KiB) for 'scopenesting'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'is_arguments_object'.
+[2025-05-06 00:36:24] Merged 4171 bytes (4.07 KiB) for 'is_arguments_object'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'entry_cfg_node'.
+[2025-05-06 00:36:24] Merged 9738 bytes (9.51 KiB) for 'entry_cfg_node'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'exit_cfg_node'.
+[2025-05-06 00:36:24] Merged 9738 bytes (9.51 KiB) for 'exit_cfg_node'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'successor'.
+[2025-05-06 00:36:24] Merged 188904 bytes (184.48 KiB) for 'successor'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'toplevel_parent_xml_node'.
+[2025-05-06 00:36:24] Merged 34 bytes for 'toplevel_parent_xml_node'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'xmlElements'.
+[2025-05-06 00:36:24] Merged 2631 bytes (2.57 KiB) for 'xmlElements'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'xmllocations'.
+[2025-05-06 00:36:24] Merged 3546 bytes (3.46 KiB) for 'xmllocations'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'xmlAttrs'.
+[2025-05-06 00:36:24] Merged 7093 bytes (6.93 KiB) for 'xmlAttrs'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'xmlComments'.
+[2025-05-06 00:36:24] Merged 182 bytes for 'xmlComments'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'filetype'.
+[2025-05-06 00:36:24] Merged 401 bytes for 'filetype'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'extraction_time'.
+[2025-05-06 00:36:24] Merged 19656 bytes (19.20 KiB) for 'extraction_time'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'jsdoc'.
+[2025-05-06 00:36:24] Merged 20377 bytes (19.90 KiB) for 'jsdoc'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'is_module'.
+[2025-05-06 00:36:24] Merged 166 bytes for 'is_module'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'guard_node'.
+[2025-05-06 00:36:24] Merged 1324 bytes (1.29 KiB) for 'guard_node'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'is_nodejs'.
+[2025-05-06 00:36:24] Merged 104 bytes for 'is_nodejs'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'yaml_scalars'.
+[2025-05-06 00:36:24] Merged 1676 bytes (1.64 KiB) for 'yaml_scalars'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'yaml'.
+[2025-05-06 00:36:24] Merged 4345 bytes (4.24 KiB) for 'yaml'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'yaml_locations'.
+[2025-05-06 00:36:24] Merged 1488 bytes (1.45 KiB) for 'yaml_locations'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'json'.
+[2025-05-06 00:36:24] Merged 706 bytes for 'json'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'json_locations'.
+[2025-05-06 00:36:24] Merged 320 bytes for 'json_locations'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'json_literals'.
+[2025-05-06 00:36:24] Merged 419 bytes for 'json_literals'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'json_properties'.
+[2025-05-06 00:36:24] Merged 410 bytes for 'json_properties'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'jsdoc_tags'.
+[2025-05-06 00:36:24] Merged 107501 bytes (104.98 KiB) for 'jsdoc_tags'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'jsdoc_tag_descriptions'.
+[2025-05-06 00:36:24] Merged 7339 bytes (7.17 KiB) for 'jsdoc_tag_descriptions'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'jsdoc_tag_names'.
+[2025-05-06 00:36:24] Merged 15645 bytes (15.28 KiB) for 'jsdoc_tag_names'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'jsdoc_type_exprs'.
+[2025-05-06 00:36:24] Merged 131067 bytes (128.00 KiB) for 'jsdoc_type_exprs'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'is_capture'.
+[2025-05-06 00:36:24] Merged 52 bytes for 'is_capture'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'is_es2015_module'.
+[2025-05-06 00:36:24] Merged 78 bytes for 'is_es2015_module'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'local_type_names'.
+[2025-05-06 00:36:24] Merged 360 bytes for 'local_type_names'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'local_namespace_names'.
+[2025-05-06 00:36:24] Merged 284 bytes for 'local_namespace_names'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'typedecl'.
+[2025-05-06 00:36:24] Merged 227 bytes for 'typedecl'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'namespacedecl'.
+[2025-05-06 00:36:24] Merged 175 bytes for 'namespacedecl'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'is_greedy'.
+[2025-05-06 00:36:24] Merged 41 bytes for 'is_greedy'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'range_quantifier_lower_bound'.
+[2025-05-06 00:36:24] Merged 42 bytes for 'range_quantifier_lower_bound'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'range_quantifier_upper_bound'.
+[2025-05-06 00:36:24] Merged 42 bytes for 'range_quantifier_upper_bound'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'ast_node_type'.
+[2025-05-06 00:36:24] Merged 45 bytes for 'ast_node_type'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'declared_function_signature'.
+[2025-05-06 00:36:24] Merged 31 bytes for 'declared_function_signature'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'is_method'.
+[2025-05-06 00:36:24] Merged 93 bytes for 'is_method'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'ast_node_symbol'.
+[2025-05-06 00:36:24] Merged 36 bytes for 'ast_node_symbol'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'invoke_expr_signature'.
+[2025-05-06 00:36:24] Merged 31 bytes for 'invoke_expr_signature'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'invoke_expr_overload_index'.
+[2025-05-06 00:36:24] Merged 31 bytes for 'invoke_expr_overload_index'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'jump_targets'.
+[2025-05-06 00:36:24] Merged 49 bytes for 'jump_targets'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'types'.
+[2025-05-06 00:36:24] Merged 53 bytes for 'types'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'type_symbol'.
+[2025-05-06 00:36:24] Merged 31 bytes for 'type_symbol'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'type_literal_value'.
+[2025-05-06 00:36:24] Merged 28 bytes for 'type_literal_value'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'symbols'.
+[2025-05-06 00:36:24] Merged 317 bytes for 'symbols'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'symbol_parent'.
+[2025-05-06 00:36:24] Merged 44 bytes for 'symbol_parent'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'symbol_module'.
+[2025-05-06 00:36:24] Merged 309 bytes for 'symbol_module'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'symbol_global'.
+[2025-05-06 00:36:24] Merged 228 bytes for 'symbol_global'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'type_contains_signature'.
+[2025-05-06 00:36:24] Merged 47 bytes for 'type_contains_signature'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'signature_types'.
+[2025-05-06 00:36:24] Merged 57 bytes for 'signature_types'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'signature_contains_type'.
+[2025-05-06 00:36:24] Merged 37 bytes for 'signature_contains_type'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'number_index_type'.
+[2025-05-06 00:36:24] Merged 33 bytes for 'number_index_type'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'base_type_names'.
+[2025-05-06 00:36:24] Merged 47 bytes for 'base_type_names'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'self_types'.
+[2025-05-06 00:36:24] Merged 28 bytes for 'self_types'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'sourceLocationPrefix'.
+[2025-05-06 00:36:24] Merged 17 bytes for 'sourceLocationPrefix'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'is_externs'.
+[2025-05-06 00:36:24] Merged 224 bytes for 'is_externs'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'jsdoc_prefix_qualifier'.
+[2025-05-06 00:36:24] Merged 1894 bytes (1.85 KiB) for 'jsdoc_prefix_qualifier'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'jsdoc_errors'.
+[2025-05-06 00:36:24] Merged 1141 bytes (1.11 KiB) for 'jsdoc_errors'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'jsdoc_record_field_name'.
+[2025-05-06 00:36:24] Merged 1658 bytes (1.62 KiB) for 'jsdoc_record_field_name'.
+[2025-05-06 00:36:24] Merging 1 fragment for 'jsdoc_has_new_parameter'.
+[2025-05-06 00:36:24] Merged 35 bytes for 'jsdoc_has_new_parameter'.
+[2025-05-06 00:36:24] Saving string and id pools to disk.
+[2025-05-06 00:36:24] Finished importing TRAP files.
+[2025-05-06 00:36:24] Read 49.23 MiB of uncompressed TRAP data.
+[2025-05-06 00:36:24] Uncompressed relation data size: 15.15 MiB
+[2025-05-06 00:36:24] Relation data size: 3.52 MiB (merge rate: 14.68 MiB/s)
+[2025-05-06 00:36:24] String pool size: 4.78 MiB
+[2025-05-06 00:36:24] ID pool size: 13.00 MiB
+[2025-05-06 00:36:24] [PROGRESS] dataset import> Finished writing database (relations: 3.52 MiB; string pool: 4.78 MiB).
+[2025-05-06 00:36:24] Pausing evaluation to close the cache at sequence stamp o+191
+[2025-05-06 00:36:24] The disk cache is freshly trimmed; leave it be.
+[2025-05-06 00:36:24] Unpausing evaluation
+[2025-05-06 00:36:24] Plumbing command codeql dataset import completed.
+[2025-05-06 00:36:24] [PROGRESS] database finalize> TRAP import complete (2s).
+[2025-05-06 00:36:24] Running plumbing command: codeql database cleanup -- /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db
+[2025-05-06 00:36:25] [PROGRESS] database cleanup> Cleaning up existing TRAP files after import...
+[2025-05-06 00:36:25] [PROGRESS] database cleanup> TRAP files cleaned up (22ms).
+[2025-05-06 00:36:25] [PROGRESS] database cleanup> Cleaning up scratch directory...
+[2025-05-06 00:36:25] [PROGRESS] database cleanup> Scratch directory cleaned up (0ms).
+[2025-05-06 00:36:25] Running plumbing command: codeql dataset cleanup -- /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/db-javascript
+[2025-05-06 00:36:25] [PROGRESS] dataset cleanup> Cleaning up dataset in /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/db-javascript.
+[2025-05-06 00:36:25] Trimming disk cache at /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/db-javascript/default/cache in mode trim.
+[2025-05-06 00:36:25] Sequence stamp origin is -6052845934826404593
+[2025-05-06 00:36:25] Pausing evaluation to quickly trim memory at sequence stamp o+0
+[2025-05-06 00:36:25] Unpausing evaluation
+[2025-05-06 00:36:25] Pausing evaluation to zealously trim disk at sequence stamp o+1
+[2025-05-06 00:36:25] Unpausing evaluation
+[2025-05-06 00:36:25] Trimming completed (2ms): Trimmed disposable data from cache.
+[2025-05-06 00:36:25] Pausing evaluation to close the cache at sequence stamp o+2
+[2025-05-06 00:36:25] The disk cache is freshly trimmed; leave it be.
+[2025-05-06 00:36:25] Unpausing evaluation
+[2025-05-06 00:36:25] [PROGRESS] dataset cleanup> Trimmed disposable data from cache.
+[2025-05-06 00:36:25] [PROGRESS] dataset cleanup> Finalizing dataset in /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/db-javascript
+[2025-05-06 00:36:25] [DETAILS] dataset cleanup> Finished deleting ID pool from /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/db-javascript (1ms).
+[2025-05-06 00:36:25] Plumbing command codeql dataset cleanup completed.
+[2025-05-06 00:36:25] Plumbing command codeql database cleanup completed with status 0.
+[2025-05-06 00:36:25] [PROGRESS] database finalize> Finished zipping source archive (331.18 KiB).
+[2025-05-06 00:36:25] Plumbing command codeql database finalize completed.
+[2025-05-06 00:36:25] [PROGRESS] database create> Successfully created database at /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db.
+[2025-05-06 00:36:25] Terminating normally.

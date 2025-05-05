@@ -1,0 +1,88 @@
+[2025-05-06 00:36:26] This is codeql execute queries -J-Xmx1800M --off-heap-ram=1556 --verbosity=progress --logdir=/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/log --evaluator-log-level=5 --warnings=show --dynamic-join-order-mode=none --qlconfig-file=/Users/vishruthvs/Projects/aem-guides-wknd/qlconfig.yml --no-rerun --interpret-passthrough=null,--format=sarif-latest,-o=/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/results/codeql-results.sarif,--max-paths=4,--csv-location-format=line-column,--print-diagnostics-summary,--print-metrics-summary,--qlconfig-file=/Users/vishruthvs/Projects/aem-guides-wknd/qlconfig.yml,--,/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db,codeql-local/queries --output=/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/results -- /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/db/db-javascript codeql-local/queries
+[2025-05-06 00:36:26] Calling plumbing command: codeql resolve queries --qlconfig-file=/Users/vishruthvs/Projects/aem-guides-wknd/qlconfig.yml --format=json -- codeql-local/queries
+[2025-05-06 00:36:26] [SPAMMY] resolve queries> Scanning for QL files at /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries.
+[2025-05-06 00:36:26] [PROGRESS] resolve queries> Recording pack reference (anonymous QL pack at /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/anything) at /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries.
+[2025-05-06 00:36:26] [SPAMMY] resolve queries> Found 1 QL files in /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries.
+[2025-05-06 00:36:26] Plumbing command codeql resolve queries completed:
+                      [
+                        "/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql"
+                      ]
+[2025-05-06 00:36:26] Creating executor with 1 threads.
+[2025-05-06 00:36:26] Calling plumbing command: codeql resolve extensions --qlconfig-file=/Users/vishruthvs/Projects/aem-guides-wknd/qlconfig.yml --include-extension-row-locations codeql-local/queries
+[2025-05-06 00:36:26] Calling plumbing command: codeql resolve queries --qlconfig-file=/Users/vishruthvs/Projects/aem-guides-wknd/qlconfig.yml --allow-library-packs --format startingpacks -- codeql-local/queries
+[2025-05-06 00:36:26] [SPAMMY] resolve queries> Scanning for QL files at /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries.
+[2025-05-06 00:36:26] [PROGRESS] resolve queries> Recording pack reference (anonymous QL pack at /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/anything) at /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries.
+[2025-05-06 00:36:26] [SPAMMY] resolve queries> Found 1 QL files in /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries.
+[2025-05-06 00:36:26] Plumbing command codeql resolve queries completed:
+                      [
+                        "/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries"
+                      ]
+[2025-05-06 00:36:26] Calling plumbing command: codeql resolve extensions-by-pack --qlconfig-file=/Users/vishruthvs/Projects/aem-guides-wknd/qlconfig.yml --include-extension-row-locations -- /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries
+[2025-05-06 00:36:26] [SPAMMY] resolve extensions-by-pack> [INCOMPATIBILITY] <anonymous pack>: not 0.0.0 {root: <anonymous pack>@0.0.0}
+[2025-05-06 00:36:26] [SPAMMY] resolve extensions-by-pack> [DERIVATION] <anonymous pack>: 0.0.0 {<anonymous pack>: not 0.0.0 {root: <anonymous pack>@0.0.0}}
+[2025-05-06 00:36:26] [SPAMMY] resolve extensions-by-pack> [DECISION 1] <anonymous pack>: 0.0.0
+[2025-05-06 00:36:26] Plumbing command codeql resolve extensions-by-pack completed:
+                      {
+                        "models" : [ ],
+                        "data" : { },
+                        "threatModels" : { },
+                        "extensionPacks" : [ ]
+                      }
+[2025-05-06 00:36:26] Plumbing command codeql resolve extensions completed:
+                      {
+                        "models" : [ ],
+                        "data" : { },
+                        "threatModels" : { },
+                        "extensionPacks" : [ ]
+                      }
+[2025-05-06 00:36:26] Calling plumbing command: codeql resolve library-path --qlconfig-file=/Users/vishruthvs/Projects/aem-guides-wknd/qlconfig.yml --query=/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql --format=json
+[2025-05-06 00:36:26] [DETAILS] resolve library-path> Resolving query at normalized path /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql.
+[2025-05-06 00:36:26] [DETAILS] resolve library-path> Found no pack; trying after symlink resolution with /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql.
+[2025-05-06 00:36:26] [DETAILS] resolve library-path> Found enclosing pack 'queries' at /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries.
+[2025-05-06 00:36:26] [DETAILS] resolve library-path> Adding compilation cache at /Users/vishruthvs/.codeql/compile-cache.
+[2025-05-06 00:36:26] [DETAILS] resolve library-path> Resolving library dependencies from /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql.
+[2025-05-06 00:36:26] [SPAMMY] resolve library-path> [INCOMPATIBILITY] <anonymous pack>: not 0.0.0 {root: <anonymous pack>@0.0.0}
+[2025-05-06 00:36:26] [SPAMMY] resolve library-path> [DERIVATION] <anonymous pack>: 0.0.0 {<anonymous pack>: not 0.0.0 {root: <anonymous pack>@0.0.0}}
+[2025-05-06 00:36:26] [SPAMMY] resolve library-path> [DECISION 1] <anonymous pack>: 0.0.0
+[2025-05-06 00:36:26] [DETAILS] resolve library-path> QL pack dependencies for /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries resolved OK.
+[2025-05-06 00:36:26] [DETAILS] resolve library-path> Found no dbscheme through dependencies.
+[2025-05-06 00:36:26] Plumbing command codeql resolve library-path completed:
+                      {
+                        "libraryPath" : [
+                          "/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries"
+                        ],
+                        "compilationCache" : [
+                          "/Users/vishruthvs/.codeql/compile-cache"
+                        ],
+                        "relativeName" : "queries/xss.ql",
+                        "possibleAdvice" : "There should probably be a qlpack.yml file declaring dependencies in /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries or an enclosing directory.",
+                        "qlPackName" : "queries"
+                      }
+[2025-05-06 00:36:26] [PROGRESS] execute queries> Compiling query plan for /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql.
+[2025-05-06 00:36:26] [DETAILS] execute queries> Resolving imports for /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql.
+[2025-05-06 00:36:26] Resolved file set for /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql hashes to fa3073355536f58ce198179f30937821.
+[2025-05-06 00:36:26] [DETAILS] execute queries> Checking QL for /Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql.
+[2025-05-06 00:36:26] Stale frontend caches are invalidated based on import graph reachability.
+[2025-05-06 00:36:27] ExternalModuleBindingPass ...
+[2025-05-06 00:36:27] ExternalModuleBindingPass time: 00:00.000
+[2025-05-06 00:36:27] CollectInstantiationsPass ...
+[2025-05-06 00:36:27] CollectInstantiationsPass time: 00:00.002
+[2025-05-06 00:36:27] Ql checks ...
+[2025-05-06 00:36:27] Ql checks time: 00:00.029
+[2025-05-06 00:36:27] [ERROR] execute queries> ERROR: could not resolve module javascript (/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql:15,8-18)
+[2025-05-06 00:36:27] [ERROR] execute queries> ERROR: could not resolve module DataFlow (/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql:18,20-28)
+[2025-05-06 00:36:27] [ERROR] execute queries> ERROR: could not resolve type ThisExpr (/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql:20,30-38)
+[2025-05-06 00:36:27] [ERROR] execute queries> ERROR: could not resolve module DataFlow (/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql:22,11-19)
+[2025-05-06 00:36:27] [ERROR] execute queries> ERROR: could not resolve module DataFlow (/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql:23,11-19)
+[2025-05-06 00:36:27] [ERROR] execute queries> ERROR: could not resolve module DataFlow (/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql:27,18-26)
+[2025-05-06 00:36:27] [ERROR] execute queries> ERROR: could not resolve module DataFlow (/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql:28,10-18)
+[2025-05-06 00:36:27] [ERROR] execute queries> ERROR: could not resolve type MethodCallExpr (/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql:33,10-24)
+[2025-05-06 00:36:27] [ERROR] execute queries> ERROR: could not resolve module DataFlow (/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql:39,6-14)
+[2025-05-06 00:36:27] [ERROR] execute queries> ERROR: could not resolve module DataFlow (/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql:39,29-37)
+[2025-05-06 00:36:27] [ERROR] execute queries> ERROR: could not resolve module DataFlow (/Users/vishruthvs/Projects/aem-guides-wknd/codeql-local/queries/xss.ql:43,3-11)
+[2025-05-06 00:36:27] Sequence stamp origin is -6052845928123966393
+[2025-05-06 00:36:27] Pausing evaluation to close the cache at sequence stamp o+0
+[2025-05-06 00:36:27] The disk cache is freshly trimmed; leave it be.
+[2025-05-06 00:36:27] Unpausing evaluation
+[2025-05-06 00:36:27] This NaiveBuddyAllocator requested 0 eviction rounds.
+[2025-05-06 00:36:27] Exiting with code 2
