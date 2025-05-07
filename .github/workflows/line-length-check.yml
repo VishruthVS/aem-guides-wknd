@@ -28,6 +28,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           
           # Find files with lines exceeding 120 characters in ui.frontend directory
+          # Ensure grep outputs in "filename:line_number:content" format
           LONG_LINES=$(grep -r --include="*.*" -n ".\{121,\}" ui.frontend || true)
           
           if [ -z "$LONG_LINES" ]; then
@@ -43,8 +44,17 @@ jobs:
             echo "| File | Line | Content |" >> $GITHUB_STEP_SUMMARY
             echo "| ---- | ---- | ------- |" >> $GITHUB_STEP_SUMMARY
             
+            # Create a file for compact display of all violations
+            echo "# All Line Length Violations" > line_violations.txt
+            echo "" >> line_violations.txt
+            
             # Process each line and add to the summary
-            echo "$LONG_LINES" | while IFS=':' read -r file line content; do
+            echo "$LONG_LINES" | while read -r line_info; do
+              # Parse the line info (handling potential colons in the content)
+              file=$(echo "$line_info" | cut -d':' -f1)
+              line_num=$(echo "$line_info" | cut -d':' -f2)
+              content=$(echo "$line_info" | cut -d':' -f3-)
+              
               # Truncate content if too long for display
               if [ ${#content} -gt 100 ]; then
                 display_content="${content:0:97}..."
@@ -55,13 +65,30 @@ jobs:
               # Escape content for markdown table
               display_content=$(echo "$display_content" | sed 's/|/\\|/g')
               
-              echo "| $file | $line | $display_content |" >> $GITHUB_STEP_SUMMARY
+              echo "| $file | $line_num | $display_content |" >> $GITHUB_STEP_SUMMARY
               
-              # Create annotations visible in GitHub UI
-              echo "::warning file=$file,line=$line::Line exceeds 120 characters"
+              # Add to the violations file
+              echo "File: $file, Line: $line_num" >> line_violations.txt
+              
+              # Create annotations visible in GitHub UI with clear file path
+              echo "::warning file=$file,line=$line_num::Line in $file:$line_num exceeds 120 characters"
+            done
+            
+            # Print all violations to console for clarity
+            cat line_violations.txt
+            
+            # Generate file-based summary for clearer output
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "## Files with violations" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            # Count violations per file and display in sorted order
+            echo "$LONG_LINES" | cut -d':' -f1 | sort | uniq -c | sort -nr | 
+            while read -r count file; do
+              echo "- **$file**: $count violation(s)" >> $GITHUB_STEP_SUMMARY
             done
             
             # Make the check fail if we found any violations
-            echo "::error::Found $LINE_COUNT lines exceeding 120 characters in ui.frontend directory. See job summary for details."
+            echo "::error::Found $LINE_COUNT lines exceeding 120 characters in ui.frontend directory. See job summary and console output for details."
             exit 1
           fi
