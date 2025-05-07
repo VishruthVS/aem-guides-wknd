@@ -129,14 +129,14 @@ jobs:
           echo "| Severity | Rule | Location | Message |" >> $GITHUB_STEP_SUMMARY
           echo "| --- | --- | --- | --- |" >> $GITHUB_STEP_SUMMARY
           
-          # Process all SARIF files to extract comprehensive issue details
+          # Process all SARIF files to extract comprehensive issue details with safer jq formatting
           find sarif-results -name "*.sarif" -type f | while read -r file; do
             jq -r '.runs[0].results[] | 
               "| " + (.properties.severity // "unknown") + 
               " | " + (.rule.id // .ruleId // "unnamed-rule") + 
               " | " + (.locations[0].physicalLocation.artifactLocation.uri // "unknown") + ":" + 
-                (.locations[0].physicalLocation.region.startLine // "0") + 
-              " | " + (.message.text // "No message provided") + " |"' "$file" >> $GITHUB_STEP_SUMMARY
+                (if .locations[0].physicalLocation.region.startLine then (.locations[0].physicalLocation.region.startLine | tostring) else "0" end) + 
+              " | " + (.message.text // "No message provided") + " |"' "$file" || echo "Error processing $file" >> $GITHUB_STEP_SUMMARY
           done
         else
           echo "🎉 **No security issues found!**" >> $GITHUB_STEP_SUMMARY
