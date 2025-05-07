@@ -1,0 +1,277 @@
+name: "Line Length and Security Check"
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'ui.frontend/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'ui.frontend/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write  # Required for uploading security results
+  pull-requests: write    # Required for PR comments
+
+jobs:
+  check-line-length:
+    name: Check Line Length
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for lines exceeding 120 characters
+        run: | 
+          echo "# Line Length Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Find files with lines exceeding 120 characters in ui.frontend directory
+          # Ensure grep outputs in "filename:line_number:content" format
+          LONG_LINES=$(grep -r --include="*.*" -n ".\{121,\}" ui.frontend || true)
+          
+          if [ -z "$LONG_LINES" ]; then
+            echo "✅ No lines exceeding 120 characters found in ui.frontend directory." >> $GITHUB_STEP_SUMMARY
+            echo "::notice::No lines exceeding 120 characters found."
+          else
+            # Count total violations
+            LINE_COUNT=$(echo "$LONG_LINES" | wc -l)
+            echo "❌ Found $LINE_COUNT lines exceeding 120 characters in ui.frontend directory:" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            # Create a table for the results
+            echo "| File | Line | Content |" >> $GITHUB_STEP_SUMMARY
+            echo "| ---- | ---- | ------- |" >> $GITHUB_STEP_SUMMARY
+            
+            # Create a file for compact display of all violations
+            echo "# All Line Length Violations" > line_violations.txt
+            echo "" >> line_violations.txt
+            
+            # Process each line and add to the summary
+            echo "$LONG_LINES" | while read -r line_info; do
+              # Parse the line info (handling potential colons in the content)
+              file=$(echo "$line_info" | cut -d':' -f1)
+              line_num=$(echo "$line_info" | cut -d':' -f2)
+              content=$(echo "$line_info" | cut -d':' -f3-)
+              
+              # Truncate content if too long for display
+              if [ ${#content} -gt 100 ]; then
+                display_content="${content:0:97}..."
+              else
+                display_content="$content"
+              fi
+              
+              # Escape content for markdown table
+              display_content=$(echo "$display_content" | sed 's/|/\\|/g')
+              
+              echo "| $file | $line_num | $display_content |" >> $GITHUB_STEP_SUMMARY
+              
+              # Add to the violations file
+              echo "File: $file, Line: $line_num" >> line_violations.txt
+              
+              # Create annotations visible in GitHub UI with clear file path
+              echo "::warning file=$file,line=$line_num::Line in $file:$line_num exceeds 120 characters"
+            done
+            
+            # Print all violations to console for clarity
+            cat line_violations.txt
+            
+            # Generate file-based summary for clearer output
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "## Files with violations" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            # Count violations per file and display in sorted order
+            echo "$LONG_LINES" | cut -d':' -f1 | sort | uniq -c | sort -nr | 
+            while read -r count file; do
+              echo "- **$file**: $count violation(s)" >> $GITHUB_STEP_SUMMARY
+            done
+            
+            # Make the check fail if we found any violations
+            echo "::error::Found $LINE_COUNT lines exceeding 120 characters in ui.frontend directory. See job summary and console output for details."
+            exit 1
+          fi
+
+  owasp-dependency-check:
+    name: OWASP Dependency Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'ui.frontend/package.json'
+
+      # Updated Java setup with explicit configuration
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          java-package: 'jdk'
+          architecture: 'x64'
+          cache: 'maven'
+          check-latest: true
+          
+      # Manually set JAVA_HOME and verify installation
+      - name: Set and verify Java installation
+        run: |
+          echo "Verifying Java installation..."
+          echo "Original JAVA_HOME: $JAVA_HOME"
+          
+          # Find Java home directory
+          JAVA_PATH=$(which java)
+          echo "Java executable found at: $JAVA_PATH"
+          
+          # Handle symlinks to get the actual path
+          JAVA_RESOLVED_PATH=$(readlink -f $JAVA_PATH || echo $JAVA_PATH)
+          echo "Resolved Java path: $JAVA_RESOLVED_PATH"
+          
+          # Set JAVA_HOME to the detected directory (two levels up from bin/java)
+          DETECTED_JAVA_HOME=$(dirname $(dirname $JAVA_RESOLVED_PATH))
+          echo "JAVA_HOME=$DETECTED_JAVA_HOME" >> $GITHUB_ENV
+          
+          # Wait for environment variable to propagate
+          sleep 2
+          
+          # Verify environment
+          echo "Updated JAVA_HOME: $JAVA_HOME"
+          echo "Java version:"
+          java -version
+          
+          # Verify Java binary exists at expected location
+          if [ -f "$JAVA_HOME/bin/java" ]; then
+            echo "✅ Java binary found at: $JAVA_HOME/bin/java"
+          else
+            echo "❌ Java binary NOT found at expected location: $JAVA_HOME/bin/java"
+            echo "Contents of bin directory:"
+            ls -la $JAVA_HOME/bin || echo "Cannot list bin directory"
+            exit 1
+          fi
+
+      - name: Install NPM dependencies
+        run: cd ui.frontend && npm ci
+        
+      # Create suppressions file if it doesn't exist
+      - name: Ensure suppressions file exists
+        run: |
+          mkdir -p .github
+          if [ ! -f .github/dependency-check-suppressions.xml ]; then
+            echo '<?xml version="1.0" encoding="UTF-8"?>
+            <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+              <!-- Add suppressions here -->
+            </suppressions>' > .github/dependency-check-suppressions.xml
+          fi
+
+      # Use a different approach for OWASP Dependency Check
+      - name: Run OWASP Dependency Check directly
+        run: |
+          # Create output directory
+          mkdir -p reports
+          
+          # Download the latest dependency-check CLI tool
+          curl -LO https://github.com/jeremylong/DependencyCheck/releases/download/v8.4.0/dependency-check-8.4.0-release.zip
+          unzip dependency-check-8.4.0-release.zip
+          
+          # Run the dependency check
+          ./dependency-check/bin/dependency-check.sh \
+            --project "aem-guides-wknd" \
+            --scan ui.frontend \
+            --format "ALL" \
+            --out reports \
+            --suppression ./.github/dependency-check-suppressions.xml \
+            --failOnCVSS 7 \
+            --enableExperimental
+
+      - name: Upload dependency check report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dependency-check-reports
+          path: reports/
+          
+      - name: Generate Job Summary
+        if: always()
+        run: |
+          echo "# OWASP Dependency Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Check if the HTML report exists
+          if [ -f "reports/dependency-check-report.html" ]; then
+            # Count vulnerabilities by severity
+            HIGH_COUNT=$(grep -o "Highest Severity: High" reports/dependency-check-report.html | wc -l || echo "0")
+            CRITICAL_COUNT=$(grep -o "Highest Severity: Critical" reports/dependency-check-report.html | wc -l || echo "0")
+            
+            if [ "$HIGH_COUNT" -gt 0 ] || [ "$CRITICAL_COUNT" -gt 0 ]; then
+              echo "⚠️ Vulnerabilities found:" >> $GITHUB_STEP_SUMMARY
+              [ "$CRITICAL_COUNT" -gt 0 ] && echo "- Critical: $CRITICAL_COUNT" >> $GITHUB_STEP_SUMMARY
+              [ "$HIGH_COUNT" -gt 0 ] && echo "- High: $HIGH_COUNT" >> $GITHUB_STEP_SUMMARY
+              echo "" >> $GITHUB_STEP_SUMMARY
+              echo "See the uploaded artifact 'dependency-check-reports' for detailed information." >> $GITHUB_STEP_SUMMARY
+            else
+              echo "✅ No high or critical vulnerabilities found." >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "❌ Dependency check report not generated. Check the logs for errors." >> $GITHUB_STEP_SUMMARY
+          fi
+
+  snyk-security-scan:
+    name: Snyk Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'ui.frontend/package.json'
+
+      - name: Install dependencies
+        run: cd ui.frontend && npm ci
+
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/node@master
+        continue-on-error: true  # Don't fail the build for detected issues
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --all-projects
+
+      # Create a placeholder SARIF file if Snyk doesn't generate one
+      - name: Ensure SARIF file exists
+        run: |
+          if [ ! -f "snyk.sarif" ]; then
+            echo '{
+              "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+              "version": "2.1.0",
+              "runs": [
+                {
+                  "tool": {
+                    "driver": {
+                      "name": "Snyk",
+                      "informationUri": "https://snyk.io",
+                      "rules": []
+                    }
+                  },
+                  "results": []
+                }
+              ]
+            }' > snyk.sarif
+          fi
+
+      - name: Upload Snyk SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: snyk.sarif
+          category: snyk
