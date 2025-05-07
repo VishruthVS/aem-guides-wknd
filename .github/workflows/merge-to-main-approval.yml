@@ -1,0 +1,68 @@
+name: Merge to Main Approval
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
+    branches:
+      - main
+
+jobs:
+  check-multiple-prs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for multiple PRs to main
+        id: check-prs
+        run: |
+          # Get the number of open PRs to main branch
+          PR_COUNT=$(gh pr list --base main --state open --json number | jq length)
+          echo "PR count: $PR_COUNT"
+          echo "pr_count=$PR_COUNT" >> $GITHUB_OUTPUT
+          if [ "$PR_COUNT" -gt 1 ]; then
+            echo "multiple_prs=true" >> $GITHUB_OUTPUT
+          else
+            echo "multiple_prs=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create approval request
+        if: steps.check-prs.outputs.multiple_prs == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // Get current PR number
+            const prNumber = context.payload.pull_request.number;
+            
+            // Add a comment to the PR
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: `⚠️ **Multiple PRs to main detected!** ⚠️\n\nThere are currently ${steps.check-prs.outputs.pr_count} active PRs to the main branch, including this one.\n\nPlease coordinate with other PR authors and maintainers before merging to main to avoid conflicts.\n\n**This PR requires explicit approval from a maintainer before proceeding.**`
+            });
+            
+            // Apply a label to the PR
+            github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              labels: ['requires-coordination']
+            });
+
+  require-approval:
+    runs-on: ubuntu-latest
+    needs: check-multiple-prs
+    if: needs.check-multiple-prs.outputs.multiple_prs == 'true'
+    steps:
+      - name: Require approval for merging
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // This job exists to be a required check that maintainers must approve
+            // when there are multiple PRs to main
+            console.log("This PR requires explicit maintainer approval because multiple PRs to main are active");
