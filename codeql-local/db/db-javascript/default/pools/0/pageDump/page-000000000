@@ -166,7 +166,7 @@ find sarif-results -type f -name "*.sarif" | while read file; do
   filename=$(basename "$file" .sarif)
   sarif-multitool transform -t HTML -o "./html-reports/${filename}.html" "$file" || echo "Error processing $file"
 done
-name: G ... ltitoolUpload HTML reports as artifactcodeql-html-reports./html-reportsname: c ... reports- name: ... ositoryname: Analyzeanalyze:name: " ... alysis"yaml/Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/deploy-github-pages.ymlDeploy to GitHub PagesDeploy  ... b Pages[ "main" ]branches: [ "main" ]pagesid-tokencontents: readconcurrencygroup"pages"cancel-in-progressgroup: "pages"buildCheckoutname: CheckoutSetup Pagesactions/configure-pages@v4actions ... ages@v4name: Setup Pagescachenpm'npm'cache-dependency-pathcache-d ... cy-pathui.frontend/package.jsonui.fron ... ge.jsonnode-version: 16Install dependenciescd ui.frontend
+name: G ... ltitoolUpload HTML reports as artifactcodeql-html-reports./html-reportsname: c ... reports- name: ... ositoryname: Analyzeanalyze:name: " ... alysis"yaml/Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/codeql-line-length.ymlCodeQL Line Length Check"CodeQL ...  Check"[ "main" ]pathsui.frontend/**'ui.frontend/**'- 'ui.frontend/**'branches: [ "main" ]securit ... : writecodeql-line-lengthAnalyze Line Lengthgithub/codeql-action/init@v2github/ ... init@v2+./codeql-local/line-length-check.ql+./code ... heck.qlextraction-optionjavascript.trap.withTextualInfo=truejavascr ... fo=trueAutobuildgithub/codeql-action/autobuild@v2github/ ... uild@v2name: Autobuildgithub/codeql-action/analyze@v2github/ ... lyze@v2name: A ...  Lengthcodeql-line-length:name: " ...  Check"/Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/deploy-github-pages.ymlDeploy to GitHub PagesDeploy  ... b Pagespagesid-tokencontents: readconcurrencygroup"pages"cancel-in-progressgroup: "pages"buildCheckoutname: CheckoutSetup Pagesactions/configure-pages@v4actions ... ages@v4name: Setup Pagescachenpm'npm'cache-dependency-pathcache-d ... cy-pathui.frontend/package.jsonui.fron ... ge.jsonnode-version: 16Install dependenciescd ui.frontend
 npm ci
 name: I ... denciesBuild sitecd ui.frontend
 npm run build
@@ -176,10 +176,11 @@ touch docs/.nojekyll
 name: C ... rectoryUpload artifactactions/upload-pages-artifact@v1actions ... fact@v1docspath: docs- name: Checkoutruns-on ... -latestdeployenvironmentgithub-pagesurl${{ steps.deployment.outputs.page_url }}${{ ste ... _url }}name: github-pagesneedsdeploymentactions/deploy-pages@v2actions ... ages@v2name: D ... b Pages- name: ... b Pagesenvironment:build:/Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/deploy-to-wknd-prod.ymlDeploy to WKND.site ProductionDeploy  ... ductionenvTARGET_REPO${{ secrets.WKND_REPOSITORY }}${{ sec ... TORY }}TARGET_BRANCH_DEV${{ secrets.WKND_BRANCH_DEV }}${{ sec ... _DEV }}TARGET_BRANCH_PROD${{ secrets.WKND_BRANCH_PROD }}${{ sec ... PROD }}USER_EMAIL${{ secrets.WKND_USER_EMAIL }}${{ sec ... MAIL }}USER_NAME${{ secrets.WKND_USER_NAME }}${{ sec ... NAME }}USER_PWD${{ secrets.WKND_PASSWORD }}${{ sec ... WORD }}TARGET_ ... TORY }}master[ master ]branches: [ master ]fetch-depth'0'fetch-depth: '0'uses: a ... kout@v4Add WKND remotegit remote add wknd https://${USER_EMAIL}:${USER_PWD}@${TARGET_REPO}git rem ... T_REPO}name: A ...  remoteSet Git configgit config --global credential.helper cache
 git config --global user.email ${USER_EMAIL}
 git config --global user.name ${USER_NAME}
-name: Set Git configPush changes to WKND DevelopmentPush ch ... lopmentgit push -u wknd master:${TARGET_BRANCH_DEV}git pus ... CH_DEV}name: P ... lopmentPush changes to WKND ProductionPush ch ... ductiongit push -u wknd master:${TARGET_BRANCH_PROD}git pus ... H_PROD}name: P ... duction- uses: ... kout@v4name: D ... duction/Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/line-length-check.ymlLine Length Check"Line Length Check"pathsui.frontend/**'ui.frontend/**'- 'ui.frontend/**'check-line-lengthCheck Line LengthCheck for lines exceeding 120 charactersCheck f ... ractersecho "# Line Length Check Results" >> $GITHUB_STEP_SUMMARY
+name: Set Git configPush changes to WKND DevelopmentPush ch ... lopmentgit push -u wknd master:${TARGET_BRANCH_DEV}git pus ... CH_DEV}name: P ... lopmentPush changes to WKND ProductionPush ch ... ductiongit push -u wknd master:${TARGET_BRANCH_PROD}git pus ... H_PROD}name: P ... duction- uses: ... kout@v4name: D ... duction/Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/line-length-check.ymlLine Length Check"Line Length Check"check-line-lengthCheck Line LengthCheck for lines exceeding 120 charactersCheck f ... ractersecho "# Line Length Check Results" >> $GITHUB_STEP_SUMMARY
 echo "" >> $GITHUB_STEP_SUMMARY
 
 # Find files with lines exceeding 120 characters in ui.frontend directory
+# Ensure grep outputs in "filename:line_number:content" format
 LONG_LINES=$(grep -r --include="*.*" -n ".\{121,\}" ui.frontend || true)
 
 if [ -z "$LONG_LINES" ]; then
@@ -195,8 +196,17 @@ else
   echo "| File | Line | Content |" >> $GITHUB_STEP_SUMMARY
   echo "| ---- | ---- | ------- |" >> $GITHUB_STEP_SUMMARY
   
+  # Create a file for compact display of all violations
+  echo "# All Line Length Violations" > line_violations.txt
+  echo "" >> line_violations.txt
+  
   # Process each line and add to the summary
-  echo "$LONG_LINES" | while IFS=':' read -r file line content; do
+  echo "$LONG_LINES" | while read -r line_info; do
+    # Parse the line info (handling potential colons in the content)
+    file=$(echo "$line_info" | cut -d':' -f1)
+    line_num=$(echo "$line_info" | cut -d':' -f2)
+    content=$(echo "$line_info" | cut -d':' -f3-)
+    
     # Truncate content if too long for display
     if [ ${#content} -gt 100 ]; then
       display_content="${content:0:97}..."
@@ -207,16 +217,33 @@ else
     # Escape content for markdown table
     display_content=$(echo "$display_content" | sed 's/|/\\|/g')
     
-    echo "| $file | $line | $display_content |" >> $GITHUB_STEP_SUMMARY
+    echo "| $file | $line_num | $display_content |" >> $GITHUB_STEP_SUMMARY
     
-    # Create annotations visible in GitHub UI
-    echo "::warning file=$file,line=$line::Line exceeds 120 characters"
+    # Add to the violations file
+    echo "File: $file, Line: $line_num" >> line_violations.txt
+    
+    # Create annotations visible in GitHub UI with clear file path
+    echo "::warning file=$file,line=$line_num::Line in $file:$line_num exceeds 120 characters"
+  done
+  
+  # Print all violations to console for clarity
+  cat line_violations.txt
+  
+  # Generate file-based summary for clearer output
+  echo "" >> $GITHUB_STEP_SUMMARY
+  echo "## Files with violations" >> $GITHUB_STEP_SUMMARY
+  echo "" >> $GITHUB_STEP_SUMMARY
+  
+  # Count violations per file and display in sorted order
+  echo "$LONG_LINES" | cut -d':' -f1 | sort | uniq -c | sort -nr | 
+  while read -r count file; do
+    echo "- **$file**: $count violation(s)" >> $GITHUB_STEP_SUMMARY
   done
   
   # Make the check fail if we found any violations
-  echo "::error::Found $LINE_COUNT lines exceeding 120 characters in ui.frontend directory. See job summary for details."
+  echo "::error::Found $LINE_COUNT lines exceeding 120 characters in ui.frontend directory. See job summary and console output for details."
   exit 1
-finame: C ... ractersname: C ...  Lengthcheck-line-length:name: " ...  Check"/Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/maven-release.ymlRelease to OSSRHinputsreleaseVersionRelease version (major.minor.patch)'Releas ... patch)'required''descrip ... patch)'dryRunDry Run? (false to do an actual release)'Dry Ru ... lease)''true'descrip ... lease)'releaseVersion:inputs:workflow_dispatch:releasegithub.repository == 'adobe/aem-guides-wknd' && github.ref == 'refs/heads/main'github. ... s/main'actions/checkout@v3uses: a ... kout@v3Setup JDKactions/setup-java@v3actions ... java@v3distributiontemurin'temurin'java-versionmavendistrib ... emurin'name: Setup JDKImport GPG keyGPG_SECRET_KEYS${{ secrets.GPG_SECRET_KEYS }}${{ sec ... KEYS }}GPG_OWNERTRUST${{ secrets.GPG_OWNERTRUST }}${{ sec ... RUST }}GPG_SEC ... KEYS }}echo $GPG_SECRET_KEYS | base64 --decode | gpg --import --no-tty --batch --yes
+finame: C ... ractersname: C ...  Lengthcheck-line-length:/Users/vishruthvs/Projects/aem-guides-wknd/.github/workflows/maven-release.ymlRelease to OSSRHinputsreleaseVersionRelease version (major.minor.patch)'Releas ... patch)'required''descrip ... patch)'dryRunDry Run? (false to do an actual release)'Dry Ru ... lease)''true'descrip ... lease)'releaseVersion:inputs:workflow_dispatch:releasegithub.repository == 'adobe/aem-guides-wknd' && github.ref == 'refs/heads/main'github. ... s/main'actions/checkout@v3uses: a ... kout@v3Setup JDKactions/setup-java@v3actions ... java@v3distributiontemurin'temurin'java-versionmavendistrib ... emurin'name: Setup JDKImport GPG keyGPG_SECRET_KEYS${{ secrets.GPG_SECRET_KEYS }}${{ sec ... KEYS }}GPG_OWNERTRUST${{ secrets.GPG_OWNERTRUST }}${{ sec ... RUST }}GPG_SEC ... KEYS }}echo $GPG_SECRET_KEYS | base64 --decode | gpg --import --no-tty --batch --yes
 echo $GPG_OWNERTRUST | base64 --decode | gpg --import-ownertrust --no-tty --batch --yes
 name: Import GPG keyConfigure git user for release commitsConfigu ... commitsX_GITHUB_USERNAME${{ secrets.ADOBE_BOT_GITHUB_USERNAME  }}${{ sec ... AME  }}X_GITHU ... AME  }}git config user.email "Grp-opensourceoffice@adobe.com"
 git config user.name "${X_GITHUB_USERNAME}"
@@ -13336,5 +13363,4 @@ http://www.w3.org/TR/cssom-view/#dom-window-scrollby
 http://www.w3.org/TR/cssom-view/#dom-window-screenxhttp://www.w3.org/TR/cssom-view/#dom-window-screenyhttp://www.w3.org/TR/cssom-view/#dom-window-outerwidthhttp://www.w3.org/TR/cssom-view/#dom-window-outerheighthttp://www.w3.org/TR/cssom-view/#mediaquerylisthttp://www.w3.org/TR/cssom-view/#dom-mediaquerylist-mediahttp://www.w3.org/TR/cssom-view/#dom-mediaquerylist-matcheshttp://www.w3.org/TR/cssom-view/#dom-mediaquerylist-addlistener
 http://www.w3.org/TR/cssom-view/#dom-mediaquerylist-removelistener
 (function (!MediaQueryList): void)function (!MediaQueryList): void!MediaQueryListhttp://www.w3.org/TR/cssom-view/#mediaquerylistlistenerhttp://www.w3.org/TR/cssom-view/#screenhttp://www.w3.org/TR/cssom-view/#dom-screen-availwidthhttp://www.w3.org/TR/cssom-view/#dom-screen-availheighthttp://www.w3.org/TR/cssom-view/#dom-screen-widthhttp://www.w3.org/TR/cssom-view/#dom-screen-heighthttp://www.w3.org/TR/cssom-view/#dom-screen-colordepthhttp://www.w3.org/TR/cssom-view/#dom-screen-pixeldepthhttp://www.w3.org/TR/cssom-view/#dom-document-elementfrompointhttp://www.w3.org/TR/cssom-view/#dom-document-caretpositionfrompointhttp://dev.w3.org/csswg/cssom-view/#dom-document-scrollingelementhttp://www.w3.org/TR/cssom-view/#caretpositionhttp://www.w3.org/TR/cssom-view/#dom-caretposition-offsetnodehttp://www.w3.org/TR/cssom-view/#dom-caretposition-offset!ClientRectListhttp://www.w3.org/TR/cssom-view/#dom-element-getclientrects!ClientRecthttp://www.w3.org/TR/cssom-view/#dom-element-getboundingclientrect(boolean|{behavior: string, block: string})=(boolean|{behavior: string, block: string}){behavior: string, block: string}blockhttp://www.w3.org/TR/cssom-view/#dom-element-scrollintoview
-http://www.w3.org/TR/cssom-view/#dom-element-scrolltophttp://www.w3.org/TR/cssom-view/#dom-element-scrolllefthttp://www.w3.org/TR/cssom-view/#dom-element-scrollwidthhttp://www.w3.org/TR/cssom-view/#dom-element-scrollheighthttp://www.w3.org/TR/cssom-view/#dom-element-clienttophttp://www.w3.org/TR/cssom-view/#dom-element-clientlefthttp://www.w3.org/TR/cssom-view/#dom-element-clientwidthhttp://www.w3.org/TR/cssom-view/#dom-element-clientheighthttp://www.w3.org/TR/cssom-view/#dom-htmlelement-offsetparenthttp://www.w3.org/TR/cssom-view/#dom-htmlelement-offsettophttp://www.w3.org/TR/cssom-view/#dom-htmlelement-offsetlefthttp://www.w3.org/TR/cssom-view/#dom-htmlelement-offsetwidthhttp://www.w3.org/TR/cssom-view/#dom-htmlelement-offsetheighthttp://www.w3.org/TR/cssom-view/#dom-range-getclientrectshttp://www.w3.org/TR/cssom-view/#dom-range-getboundingclientrecthttp://www.w3.org/TR/cssom-view/#dom-mouseevent-screenxhttp://www.w3.org/TR/cssom-view/#dom-mouseevent-screenyhttp://www.w3.org/TR/cssom-view/#dom-mouseevent-pagexhttp://www.w3.org/TR/cssom-view/#dom-mouseevent-pageyhttp://www.w3.org/TR/cssom-view/#dom-mouseevent-clientxhttp://www.w3.org/TR/cssom-view/#dom-mouseevent-clientyhttp://www.w3.org/TR/cssom-view/#dom-mouseevent-xhttp://www.w3.org/TR/cssom-view/#dom-mouseevent-yhttp://www.w3.org/TR/cssom-view/#dom-mouseevent-offsetxhttp://www.w3.org/TR/cssom-view/#dom-mouseevent-offsetyhttp://www.w3.org/TR/cssom-view/#the-clientrectlist-interface
-IArrayLike.<!ClientRect>http://www.w3.org/TR/cssom-view/#dom-clientrectlist-lengthhttp://www.w3.org/TR/cssom-view/#dom-clientrectlist-itemhttp://www.w3.org/TR/cssom-view/#the-clientrect-interfacehttp://www.w3.org/TR/cssom-view/#dom-clientrect-tophttp://ww˜ˇ ˜  *H'    
+http://www.w3.org/TR/cssom-view/#dom-element-scrolltophttp://www.w3.org/TR/cssom-view/#dom-element-scrolllefthttp://˘ˇ ˜  ≠ç¶    

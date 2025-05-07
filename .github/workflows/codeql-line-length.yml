@@ -29,21 +29,25 @@ jobs:
 
       # Setup CodeQL with our custom line length query
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@v3
         with:
           languages: javascript
           # Point to our custom query that checks line length
           queries: +./codeql-local/line-length-check.ql
-          # Enable text extraction for line analysis
-          extraction-option: javascript.trap.withTextualInfo=true
+          # Enable text extraction for line analysis with the proper option name
+          config: |
+            extraction:
+              javascript:
+                trap:
+                  withTextualInfo: true
 
       # Auto-build JavaScript 
       - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
+        uses: github/codeql-action/autobuild@v3
       
       # Analyze the code with CodeQL
       # This step will automatically fail if any line length issues are found
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@v3
         with:
           category: "/language:javascript"
