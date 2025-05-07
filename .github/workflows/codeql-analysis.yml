@@ -129,15 +129,32 @@ jobs:
           echo "| Severity | Rule | Location | Message |" >> $GITHUB_STEP_SUMMARY
           echo "| --- | --- | --- | --- |" >> $GITHUB_STEP_SUMMARY
           
-          # Process all SARIF files to extract comprehensive issue details with safer jq formatting
-          find sarif-results -name "*.sarif" -type f | while read -r file; do
+          # Process each SARIF file individually with simpler approach to avoid errors
+          for file in sarif-results/*.sarif; do
+            echo "Processing issues in $file"
+            
+            # For each result in the SARIF file, extract and format the data
             jq -r '.runs[0].results[] | 
               "| " + (.properties.severity // "unknown") + 
               " | " + (.rule.id // .ruleId // "unnamed-rule") + 
-              " | " + (.locations[0].physicalLocation.artifactLocation.uri // "unknown") + ":" + 
-                (if .locations[0].physicalLocation.region.startLine then (.locations[0].physicalLocation.region.startLine | tostring) else "0" end) + 
-              " | " + (.message.text // "No message provided") + " |"' "$file" || echo "Error processing $file" >> $GITHUB_STEP_SUMMARY
+              " | " + (.locations[0].physicalLocation.artifactLocation.uri // "unknown") + 
+                (if .locations[0].physicalLocation.region.startLine then ":" + (.locations[0].physicalLocation.region.startLine | tostring) else "" end) + 
+              " | " + (.message.text | gsub("[\n\r]"; " ") // "No message provided") + " |"' "$file" >> "$GITHUB_STEP_SUMMARY" || true
           done
+          
+          # Fallback method if the above doesn't populate the table
+          if [ ! -s "$GITHUB_STEP_SUMMARY" ]; then
+            echo "Using fallback method to populate security issues table"
+            
+            # Create a simpler extraction that just gets the basic data
+            for file in sarif-results/*.sarif; do
+              cat "$file" | jq -r '.runs[0].results[] | 
+                "| unknown | " + 
+                (.rule.id // .ruleId // "js-rule") + " | " + 
+                (.locations[0].physicalLocation.artifactLocation.uri // "unknown-file") + " | " + 
+                (.message.text | gsub("[\\n\\r]"; " ") | gsub("\\""; "") // "Issue detected") + " |"' >> "$GITHUB_STEP_SUMMARY" || true
+            done
+          fi
         else
           echo "🎉 **No security issues found!**" >> $GITHUB_STEP_SUMMARY
         fi
