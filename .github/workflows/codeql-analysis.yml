@@ -47,106 +47,146 @@ jobs:
       with:
         node-version: '16'
         
+    # Install jq for JSON processing
+    - name: Install jq
+      run: sudo apt-get install -y jq
+      
     # Debug step to see what's in the SARIF directory
     - name: Debug SARIF directory
       run: |
         find sarif-results -type f | sort
         
-    # Generate dashboard data from SARIF files  
+    # Generate dashboard data from SARIF files - try both the custom script and direct parsing
     - name: Generate dashboard data from SARIF
+      id: dashboard
       run: |
         # Create a default empty dashboard data file
         echo '{"issues":[],"severityCounts":{"critical":0,"high":0,"medium":0,"low":0}}' > ./dashboard-data.json
         
-        # Run the dashboard generator script
-        node .github/codeql/sarif-to-dashboard.js sarif-results ./dashboard-data.json || echo "Error processing SARIF files - using default data"
+        # Try running the dashboard generator script
+        node .github/codeql/sarif-to-dashboard.js sarif-results ./dashboard-data.json || echo "Error processing SARIF files with custom script"
         
         # For debugging - show the generated data
         echo "Generated dashboard data:"
         cat ./dashboard-data.json
         
-    # Install jq for JSON processing
-    - name: Install jq
-      run: sudo apt-get install -y jq
-      
-    # Add a summary report to the GitHub Actions run
-    - name: Create GitHub Actions Summary
+        # As a backup method, directly extract all issues from SARIF files
+        echo "Extracting issues directly from SARIF files for completeness"
+        # Create a clean file for direct extraction
+        echo '[]' > ./all-issues.json
+        
+        # Process all SARIF files to extract all issues
+        find sarif-results -name "*.sarif" -type f | while read -r file; do
+          echo "Processing $file"
+          # Extract all results and add to the all-issues.json file
+          jq -r '.runs[0].results[]' "$file" | jq -s '.' >> ./temp-issues.json
+          # Merge with existing issues
+          jq -s '.[0] + .[1]' ./all-issues.json ./temp-issues.json > ./merged-issues.json
+          mv ./merged-issues.json ./all-issues.json
+          rm -f ./temp-issues.json
+        done
+        
+        # Count total issues found directly from SARIF
+        TOTAL_ISSUES=$(jq 'length' ./all-issues.json)
+        echo "Total issues found directly from SARIF: $TOTAL_ISSUES"
+        echo "total_issues=$TOTAL_ISSUES" >> $GITHUB_OUTPUT
+        
+    # Enhanced GitHub Actions Summary with complete issue extraction
+    - name: Create comprehensive GitHub Actions Summary
       run: |
         echo "# CodeQL Analysis Results" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         
-        # Add severity counts
+        # Direct issue counting from SARIF files
         echo "## Summary of Issues" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         
-        # Extract severity counts
-        CRITICAL=$(jq -r '.severityCounts.critical // 0' ./dashboard-data.json)
-        HIGH=$(jq -r '.severityCounts.high // 0' ./dashboard-data.json)
-        MEDIUM=$(jq -r '.severityCounts.medium // 0' ./dashboard-data.json)
-        LOW=$(jq -r '.severityCounts.low // 0' ./dashboard-data.json)
-        TOTAL=$((CRITICAL + HIGH + MEDIUM + LOW))
+        # Count issues by severity directly from SARIF files
+        CRITICAL=$(find sarif-results -name "*.sarif" -exec jq -r '.runs[0].results[] | select(.properties.severity == "critical" or .properties.severity == "error")' {} \; | jq -s 'length')
+        HIGH=$(find sarif-results -name "*.sarif" -exec jq -r '.runs[0].results[] | select(.properties.severity == "high" or .properties.severity == "warning")' {} \; | jq -s 'length')
+        MEDIUM=$(find sarif-results -name "*.sarif" -exec jq -r '.runs[0].results[] | select(.properties.severity == "medium" or .properties.severity == "recommendation")' {} \; | jq -s 'length')
+        LOW=$(find sarif-results -name "*.sarif" -exec jq -r '.runs[0].results[] | select(.properties.severity == "low" or .properties.severity == "note")' {} \; | jq -s 'length')
+        UNKNOWN=$(find sarif-results -name "*.sarif" -exec jq -r '.runs[0].results[] | select(.properties.severity == null)' {} \; | jq -s 'length')
         
-        # Display severity counts with emoji indicators
+        # Total should match what you see in code scanning
+        TOTAL=$((CRITICAL + HIGH + MEDIUM + LOW + UNKNOWN))
+        
+        # Write summary counts with emoji indicators
         echo "- 🔴 **Critical:** ${CRITICAL}" >> $GITHUB_STEP_SUMMARY
         echo "- 🟠 **High:** ${HIGH}" >> $GITHUB_STEP_SUMMARY
         echo "- 🟡 **Medium:** ${MEDIUM}" >> $GITHUB_STEP_SUMMARY
         echo "- 🔵 **Low:** ${LOW}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Total:** ${TOTAL}" >> $GITHUB_STEP_SUMMARY
+        [[ $UNKNOWN -gt 0 ]] && echo "- ⚪ **Unknown:** ${UNKNOWN}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Total Issues:** ${TOTAL}" >> $GITHUB_STEP_SUMMARY
+        
         echo "" >> $GITHUB_STEP_SUMMARY
         
-        # Create a table with the issues
-        echo "## Security Issues" >> $GITHUB_STEP_SUMMARY
+        # Create comprehensive table of all security issues
+        echo "## All Security Issues" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         
-        # Check if there are any issues
-        ISSUE_COUNT=$(jq '.issues | length' ./dashboard-data.json)
-        
-        if [ "$ISSUE_COUNT" -gt 0 ]; then
+        if [ "$TOTAL" -gt 0 ]; then
           echo "| Severity | Rule | Location | Message |" >> $GITHUB_STEP_SUMMARY
           echo "| --- | --- | --- | --- |" >> $GITHUB_STEP_SUMMARY
           
-          # Extract information from dashboard data
-          jq -r '.issues[] | "| " + .severity + " | " + .rule + " | " + .location + " | " + .message + " |"' ./dashboard-data.json >> $GITHUB_STEP_SUMMARY
+          # Process all SARIF files to extract comprehensive issue details
+          find sarif-results -name "*.sarif" -type f | while read -r file; do
+            jq -r '.runs[0].results[] | 
+              "| " + (.properties.severity // "unknown") + 
+              " | " + (.rule.id // .ruleId // "unnamed-rule") + 
+              " | " + (.locations[0].physicalLocation.artifactLocation.uri // "unknown") + ":" + 
+                (.locations[0].physicalLocation.region.startLine // "0") + 
+              " | " + (.message.text // "No message provided") + " |"' "$file" >> $GITHUB_STEP_SUMMARY
+          done
         else
           echo "🎉 **No security issues found!**" >> $GITHUB_STEP_SUMMARY
         fi
         
         echo "" >> $GITHUB_STEP_SUMMARY
         
-        # Add top vulnerable files if available
-        if jq -e '.topFiles' ./dashboard-data.json > /dev/null 2>&1; then
+        # Add top files with issues
+        if [ "$TOTAL" -gt 0 ]; then
           echo "## Top Files with Issues" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
           echo "| File | Issue Count |" >> $GITHUB_STEP_SUMMARY
           echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
           
-          jq -r '.topFiles | to_entries | sort_by(.value) | reverse | .[0:5] | .[] | "| " + .key + " | " + (.value | tostring) + " |"' ./dashboard-data.json >> $GITHUB_STEP_SUMMARY
-          
+          # Extract all file locations and count occurrences
+          find sarif-results -name "*.sarif" -exec jq -r '.runs[0].results[] | 
+            .locations[0].physicalLocation.artifactLocation.uri' {} \; | 
+            sort | uniq -c | sort -nr | head -10 | 
+            awk '{print "| " $2 " | " $1 " |"}' >> $GITHUB_STEP_SUMMARY
+            
           echo "" >> $GITHUB_STEP_SUMMARY
         fi
         
-        # Add categories breakdown if available
-        if jq -e '.categories' ./dashboard-data.json > /dev/null 2>&1; then
-          echo "## Issues by Category" >> $GITHUB_STEP_SUMMARY
+        # Add issue types/categories
+        if [ "$TOTAL" -gt 0 ]; then
+          echo "## Issues by Type" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
-          echo "| Category | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "| Rule ID | Count |" >> $GITHUB_STEP_SUMMARY
           echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
           
-          jq -r '.categories | to_entries | sort_by(.value) | reverse | .[] | "| " + .key + " | " + (.value | tostring) + " |"' ./dashboard-data.json >> $GITHUB_STEP_SUMMARY
-          
+          # Extract all rule IDs and count occurrences
+          find sarif-results -name "*.sarif" -exec jq -r '.runs[0].results[] | 
+            .rule.id // .ruleId // "unnamed-rule"' {} \; | 
+            sort | uniq -c | sort -nr | 
+            awk '{print "| " $2 " | " $1 " |"}' >> $GITHUB_STEP_SUMMARY
+            
           echo "" >> $GITHUB_STEP_SUMMARY
         fi
         
-        # Add a note about SARIF artifacts
+        # Add notes about the report
         echo "## About This Report" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "This is an automatically generated report from CodeQL analysis. The full SARIF results are available as artifacts in this workflow run." >> $GITHUB_STEP_SUMMARY
+        echo "This comprehensive report shows all ${TOTAL} security issues detected by CodeQL analysis." >> $GITHUB_STEP_SUMMARY
+        echo "The full SARIF results are available as artifacts in this workflow run." >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "Run completed at: $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "Report generated: $(date)" >> $GITHUB_STEP_SUMMARY
     
-    # Generate HTML reports from SARIF files (only for artifact, not for display)
+    # Generate HTML reports from SARIF files
     - name: Generate HTML report with SARIF Multitool
       run: |
         npm install -g @microsoft/sarif-multitool
