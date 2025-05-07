@@ -45,11 +45,11 @@ echo "## Summary of Issues" >> $GITHUB_STEP_SUMMARY
 echo "" >> $GITHUB_STEP_SUMMARY
 
 # Count issues by severity directly from SARIF files
-CRITICAL=$(find sarif-results -name "*.sarif" -exec jq -r '.runs[0].results[] | select(.properties.severity == "critical" or .properties.severity == "error")' {} \; | jq -s 'length')
-HIGH=$(find sarif-results -name "*.sarif" -exec jq -r '.runs[0].results[] | select(.properties.severity == "high" or .properties.severity == "warning")' {} \; | jq -s 'length')
-MEDIUM=$(find sarif-results -name "*.sarif" -exec jq -r '.runs[0].results[] | select(.properties.severity == "medium" or .properties.severity == "recommendation")' {} \; | jq -s 'length')
-LOW=$(find sarif-results -name "*.sarif" -exec jq -r '.runs[0].results[] | select(.properties.severity == "low" or .properties.severity == "note")' {} \; | jq -s 'length')
-UNKNOWN=$(find sarif-results -name "*.sarif" -exec jq -r '.runs[0].results[] | select(.properties.severity == null)' {} \; | jq -s 'length')
+CRITICAL=$(find sarif-results -name "*.sarif" -exec jq -r '.runs[0].results[] | select(.properties.severity == "critical" or .properties.severity == "error" or .rank == 0)' {} \; | jq -s 'length')
+HIGH=$(find sarif-results -name "*.sarif" -exec jq -r '.runs[0].results[] | select(.properties.severity == "high" or .properties.severity == "warning" or (.rank != null and .rank >= 1 and .rank <= 3.9))' {} \; | jq -s 'length')
+MEDIUM=$(find sarif-results -name "*.sarif" -exec jq -r '.runs[0].results[] | select(.properties.severity == "medium" or .properties.severity == "recommendation" or (.rank != null and .rank >= 4 and .rank <= 6.9))' {} \; | jq -s 'length')
+LOW=$(find sarif-results -name "*.sarif" -exec jq -r '.runs[0].results[] | select(.properties.severity == "low" or .properties.severity == "note" or (.rank != null and .rank >= 7))' {} \; | jq -s 'length')
+UNKNOWN=$(find sarif-results -name "*.sarif" -exec jq -r '.runs[0].results[] | select(.properties.severity == null and .rank == null)' {} \; | jq -s 'length')
 
 # Total should match what you see in code scanning
 TOTAL=$((CRITICAL + HIGH + MEDIUM + LOW + UNKNOWN))
@@ -76,9 +76,22 @@ if [ "$TOTAL" -gt 0 ]; then
   for file in sarif-results/*.sarif; do
     echo "Processing issues in $file"
     
-    # For each result in the SARIF file, extract and format the data
+    # For each result in the SARIF file, extract and format the data with better severity detection
     jq -r '.runs[0].results[] | 
-      "| " + (.properties.severity // "unknown") + 
+      "| " + 
+      (if .properties.severity != null then 
+        .properties.severity
+      elif .rank == 0 then
+        "critical"
+      elif .rank != null and .rank <= 3.9 then
+        "high" 
+      elif .rank != null and .rank <= 6.9 then
+        "medium"
+      elif .rank != null and .rank >= 7 then
+        "low"
+      else
+        "unknown"
+      end) +
       " | " + (.rule.id // .ruleId // "unnamed-rule") + 
       " | " + (.locations[0].physicalLocation.artifactLocation.uri // "unknown") + 
         (if .locations[0].physicalLocation.region.startLine then ":" + (.locations[0].physicalLocation.region.startLine | tostring) else "" end) + 
@@ -13290,4 +13303,4 @@ should be removed.Set of possible string values: 'error', 'loaded', 'loading', '
 http://dev.w3.org/csswg/css-font-loading/#dom-fontfaceset-clear
 http://dev.w3.org/csswg/css-font-loading/#dom-fontfaceset-delete
 http://dev.w3.org/csswg/css-font-loading/#dom-fontfaceset-hasfunction (!FontFace, number, !FontFaceSet)see http://dev.w3.org/csswg/css-font-loading/#dom-fontfaceset-foreach
-(Object|undefined)=!Promise.<!Array.<!FontFace>>Promise.<!Array.<!FontFace>>!Array.<!FontFace>Array.<!FontFace>http://dev.w3.org/csswg/css-font-loading/#dom-fontfaceset-loadhttp://dev.w3.org/csswg/css-font-loading/#dom-fontfaceset-check!Promise.<!FontFaceSet>Promise.<!FontFaceSet>http://dev.w3.org/csswg/css-font-loading/#dom-fontfaceset-readyhttp://dev.w3.org/csswg/css-font-loading/#dom-fontfaceset-statusStyleSh ... e.type;StyleSh ... pe.typeStyleSh ... sabled;StyleSh ... isabledStyleSh ... erNode;StyleSh ... nerNodeStyleSh ... eSheet;StyleSh ... leSheetStyleSh ... e.href;StyleSh ... pe.hrefStyleSh ... .title;StyleSh ... e.titleStyleSh ... .media;StyleSh ... e.mediaStyleSh ... length;StyleSh ... .lengthStyleSh ... ototypeStyleSh ... ex) {};StyleSh ... dex) {}StyleSh .÷ÿ ÷  WQ·    
+(Object|undefined)=!Promise.<!Array.<!FontFace>>Promise.<!Array.<!FontFace>>!Array.<!FontFace>Array.<!FontFace>http://dev.w3.org/csswg/css-font-loading/#dom-fontfaceset-loadhttp://dev.w3.org/csswg/css-font-loading/#dom-fontfaceset-check!Promise.<!FontFaceSet>Promise.<!öÿ ÷  -Hf…    

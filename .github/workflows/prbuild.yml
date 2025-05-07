@@ -39,7 +39,7 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0  # Fetch all history for accurate PR diff
 
@@ -92,14 +92,14 @@ jobs:
         echo "Full report available in the workflow artifacts." >> security-report/summary.md
 
     - name: Upload SARIF results as artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: pr-security-scan-sarif
         path: sarif-results
         retention-days: 7
 
     - name: Upload security report as artifact  
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: pr-security-report
         path: security-report

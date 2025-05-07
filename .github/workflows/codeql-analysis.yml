@@ -2,12 +2,12 @@ name: "CodeQL Analysis"
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "add-ci-cd" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "add-ci-cd" ]
   schedule:
-    - cron: '0 0 * * 0'  # Run once a week on Sunday
-  workflow_dispatch:  # Allow manual triggering
+    - cron: '0 0 * * 0' 
+  workflow_dispatch: 
 
 # Set permissions
 permissions:
