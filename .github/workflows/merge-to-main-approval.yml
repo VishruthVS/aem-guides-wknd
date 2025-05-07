@@ -9,6 +9,9 @@ on:
 jobs:
   check-multiple-prs:
     runs-on: ubuntu-latest
+    outputs:
+      pr_count: ${{ steps.check-prs.outputs.pr_count }}
+      multiple_prs: ${{ steps.check-prs.outputs.multiple_prs }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -36,13 +39,14 @@ jobs:
           script: |
             // Get current PR number
             const prNumber = context.payload.pull_request.number;
+            const prCount = ${{ steps.check-prs.outputs.pr_count }};
             
             // Add a comment to the PR
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: prNumber,
-              body: `⚠️ **Multiple PRs to main detected!** ⚠️\n\nThere are currently ${steps.check-prs.outputs.pr_count} active PRs to the main branch, including this one.\n\nPlease coordinate with other PR authors and maintainers before merging to main to avoid conflicts.\n\n**This PR requires explicit approval from a maintainer before proceeding.**`
+              body: `⚠️ **Multiple PRs to main detected!** ⚠️\n\nThere are currently ${prCount} active PRs to the main branch, including this one.\n\nPlease coordinate with other PR authors and maintainers before merging to main to avoid conflicts.\n\n**This PR requires explicit approval from a maintainer before proceeding.**`
             });
             
             // Apply a label to the PR

@@ -42,13 +42,14 @@ jobs:
             const mergedPR = context.payload.pull_request;
             const sourceBranch = mergedPR.head.ref;
             const targetBranch = mergedPR.base.ref;
+            const prCount = ${{ steps.check-main-prs.outputs.pr_count }};
             
             // Create comment on the merged PR
             github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: mergedPR.number,
-              body: `## Merge Coordination Notice\n\nYour PR from \`${sourceBranch}\` to \`${targetBranch}\` has been merged successfully.\n\nThere are currently ${steps.check-main-prs.outputs.pr_count} open PRs targeting the \`main\` branch. Consider creating a PR to merge these changes to \`main\` after coordinating with the team.\n\n[View PRs to main](${context.payload.repository.html_url}/pulls?q=is%3Apr+is%3Aopen+base%3Amain)`
+              body: `## Merge Coordination Notice\n\nYour PR from \`${sourceBranch}\` to \`${targetBranch}\` has been merged successfully.\n\nThere are currently ${prCount} open PRs targeting the \`main\` branch. Consider creating a PR to merge these changes to \`main\` after coordinating with the team.\n\n[View PRs to main](${context.payload.repository.html_url}/pulls?q=is%3Apr+is%3Aopen+base%3Amain)`
             });
             
             // Find team members to notify (repository collaborators)
@@ -65,6 +66,6 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               title: `Coordination needed: Consider merging to main`,
-              body: `A PR from \`${sourceBranch}\` to \`${targetBranch}\` was just merged (PR #${mergedPR.number}).\n\nThere are currently ${steps.check-main-prs.outputs.pr_count} open PRs targeting the \`main\` branch. Team coordination is needed to determine whether these changes should be merged to main.\n\n### Notification:\n${maintainers}\n\n### Actions Required:\n- Review the recent merge from \`${sourceBranch}\` to \`${targetBranch}\`\n- Coordinate with active PRs to main\n- Decide if a new PR should be created to merge these changes to main\n\n[View PRs to main](${context.payload.repository.html_url}/pulls?q=is%3Apr+is%3Aopen+base%3Amain)`,
+              body: `A PR from \`${sourceBranch}\` to \`${targetBranch}\` was just merged (PR #${mergedPR.number}).\n\nThere are currently ${prCount} open PRs targeting the \`main\` branch. Team coordination is needed to determine whether these changes should be merged to main.\n\n### Notification:\n${maintainers}\n\n### Actions Required:\n- Review the recent merge from \`${sourceBranch}\` to \`${targetBranch}\`\n- Coordinate with active PRs to main\n- Decide if a new PR should be created to merge these changes to main\n\n[View PRs to main](${context.payload.repository.html_url}/pulls?q=is%3Apr+is%3Aopen+base%3Amain)`,
               labels: ['coordination', 'merge-to-main']
             });
