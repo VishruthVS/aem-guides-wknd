@@ -109,22 +109,52 @@ jobs:
           cache: 'npm'
           cache-dependency-path: 'ui.frontend/package.json'
 
+      # Updated Java setup with explicit configuration
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
+          java-package: 'jdk'
+          architecture: 'x64'
           cache: 'maven'
-          java-package: 'jdk'  # Explicitly specify JDK
+          check-latest: true
           
-      # Verify Java setup
-      - name: Verify Java installation
+      # Manually set JAVA_HOME and verify installation
+      - name: Set and verify Java installation
         run: |
-          echo "JAVA_HOME: $JAVA_HOME"
+          echo "Verifying Java installation..."
+          echo "Original JAVA_HOME: $JAVA_HOME"
+          
+          # Find Java home directory
+          JAVA_PATH=$(which java)
+          echo "Java executable found at: $JAVA_PATH"
+          
+          # Handle symlinks to get the actual path
+          JAVA_RESOLVED_PATH=$(readlink -f $JAVA_PATH || echo $JAVA_PATH)
+          echo "Resolved Java path: $JAVA_RESOLVED_PATH"
+          
+          # Set JAVA_HOME to the detected directory (two levels up from bin/java)
+          DETECTED_JAVA_HOME=$(dirname $(dirname $JAVA_RESOLVED_PATH))
+          echo "JAVA_HOME=$DETECTED_JAVA_HOME" >> $GITHUB_ENV
+          
+          # Wait for environment variable to propagate
+          sleep 2
+          
+          # Verify environment
+          echo "Updated JAVA_HOME: $JAVA_HOME"
           echo "Java version:"
           java -version
-          echo "Path check:"
-          ls -la $JAVA_HOME/bin/java || echo "Java binary not found at expected location"
+          
+          # Verify Java binary exists at expected location
+          if [ -f "$JAVA_HOME/bin/java" ]; then
+            echo "✅ Java binary found at: $JAVA_HOME/bin/java"
+          else
+            echo "❌ Java binary NOT found at expected location: $JAVA_HOME/bin/java"
+            echo "Contents of bin directory:"
+            ls -la $JAVA_HOME/bin || echo "Cannot list bin directory"
+            exit 1
+          fi
 
       - name: Install NPM dependencies
         run: cd ui.frontend && npm ci
@@ -140,17 +170,24 @@ jobs:
             </suppressions>' > .github/dependency-check-suppressions.xml
           fi
 
-      - name: OWASP Dependency Check
-        uses: dependency-check/Dependency-Check_Action@main
-        with:
-          project: 'aem-guides-wknd'
-          path: 'ui.frontend'
-          format: 'ALL'
-          out: 'reports'
-          args: >
-            --scan ui.frontend
-            --suppression ./.github/dependency-check-suppressions.xml
-            --failOnCVSS 7
+      # Use a different approach for OWASP Dependency Check
+      - name: Run OWASP Dependency Check directly
+        run: |
+          # Create output directory
+          mkdir -p reports
+          
+          # Download the latest dependency-check CLI tool
+          curl -LO https://github.com/jeremylong/DependencyCheck/releases/download/v8.4.0/dependency-check-8.4.0-release.zip
+          unzip dependency-check-8.4.0-release.zip
+          
+          # Run the dependency check
+          ./dependency-check/bin/dependency-check.sh \
+            --project "aem-guides-wknd" \
+            --scan ui.frontend \
+            --format "ALL" \
+            --out reports \
+            --suppression ./.github/dependency-check-suppressions.xml \
+            --failOnCVSS 7 \
             --enableExperimental
 
       - name: Upload dependency check report
