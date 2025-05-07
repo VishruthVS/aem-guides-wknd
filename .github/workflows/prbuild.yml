@@ -1,0 +1,124 @@
+name: PR Build Check
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'  
+
+      - name: Build with Maven
+        run: mvn clean install -PautoInstallSinglePackage
+        
+  security-check:
+    name: Security Check
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+      pull-requests: write  # Required to comment on PRs
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'javascript' ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Fetch all history for accurate PR diff
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: ${{ matrix.language }}
+        queries: +./.github/codeql/custom-queries
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
+      with:
+        category: "/language:${{matrix.language}}"
+        output: sarif-results
+
+    - name: Generate Security Report
+      run: |
+        mkdir -p security-report
+        echo "## CodeQL Security Analysis" > security-report/summary.md
+        echo "Analysis completed on $(date)" >> security-report/summary.md
+        echo "### Findings Summary" >> security-report/summary.md
+        
+        # Count total findings
+        COUNT=$(grep -r '"results"' sarif-results | grep -o '\[[^]]*\]' | grep -o '{' | wc -l)
+        echo "* **Total Findings:** $COUNT" >> security-report/summary.md
+        
+        # Extract critical vulnerabilities
+        CRITICAL=$(grep -r '"level": "error"' sarif-results | wc -l)
+        echo "* **Critical Issues:** $CRITICAL" >> security-report/summary.md
+        
+        # Extract warnings
+        WARNINGS=$(grep -r '"level": "warning"' sarif-results | wc -l)
+        echo "* **Warnings:** $WARNINGS" >> security-report/summary.md
+        
+        # List of top issues
+        echo "### Top Issues" >> security-report/summary.md
+        echo "The following issues were found in files changed by this PR:" >> security-report/summary.md
+        echo "" >> security-report/summary.md
+        
+        # Extract a sample of issues to display
+        if [ $COUNT -gt 0 ]; then
+          echo '```' >> security-report/summary.md
+          grep -r "message" sarif-results --include="*.sarif" | head -10 >> security-report/summary.md
+          echo '```' >> security-report/summary.md
+        else
+          echo "✅ No security issues found in changed files" >> security-report/summary.md
+        fi
+        
+        echo "" >> security-report/summary.md
+        echo "Full report available in the workflow artifacts." >> security-report/summary.md
+
+    - name: Upload SARIF results as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: pr-security-scan-sarif
+        path: sarif-results
+        retention-days: 7
+
+    - name: Upload security report as artifact  
+      uses: actions/upload-artifact@v4
+      with:
+        name: pr-security-report
+        path: security-report
+        retention-days: 7
+        
+    - name: Comment on PR
+      uses: actions/github-script@v6
+      if: always()
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs');
+          const summary = fs.readFileSync('security-report/summary.md', 'utf8');
+          
+          const issueComment = {
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.issue.number,
+            body: summary
+          };
+          
+          github.rest.issues.createComment(issueComment);

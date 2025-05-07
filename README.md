@@ -94,3 +94,7 @@ With Adobe Stock, you have access to more than 140 million high-quality, royalty
 
 * This project was generated using the [AEM Project Archetype](https://experienceleague.adobe.com/docs/experience-manager-core-components/using/developing/archetype/overview.html).
 * This project relies on [AEM Core Components](https://experienceleague.adobe.com/docs/experience-manager-core-components/using/introduction.html).
+
+## Community Contributions
+
+We welcome community contributions to improve the WKND reference site. Please see our [CONTRIBUTING.md](CONTRIBUTING.md) guide for more information on how to get involved. Whether you're reporting bugs, suggesting enhancements, or submitting code changes, your help makes WKND better!

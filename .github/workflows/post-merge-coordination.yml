@@ -1,0 +1,71 @@
+name: Post-Merge Coordination
+
+on:
+  pull_request:
+    types: [closed]
+    branches-ignore:
+      - main
+
+jobs:
+  check-merge-and-notify:
+    # Only run this job if the PR was merged (not just closed)
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for PRs to main
+        id: check-main-prs
+        run: |
+          # Get the number of open PRs to main branch
+          PR_COUNT=$(gh pr list --base main --state open --json number | jq length)
+          echo "PR count: $PR_COUNT"
+          echo "pr_count=$PR_COUNT" >> $GITHUB_OUTPUT
+          if [ "$PR_COUNT" -gt 0 ]; then
+            echo "has_main_prs=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_main_prs=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Notify about main branch PRs
+        if: steps.check-main-prs.outputs.has_main_prs == 'true'
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            // Get the merged PR info
+            const mergedPR = context.payload.pull_request;
+            const sourceBranch = mergedPR.head.ref;
+            const targetBranch = mergedPR.base.ref;
+            const prCount = ${{ steps.check-main-prs.outputs.pr_count }};
+            
+            // Create comment on the merged PR
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: mergedPR.number,
+              body: `## Merge Coordination Notice\n\nYour PR from \`${sourceBranch}\` to \`${targetBranch}\` has been merged successfully.\n\nThere are currently ${prCount} open PRs targeting the \`main\` branch. Consider creating a PR to merge these changes to \`main\` after coordinating with the team.\n\n[View PRs to main](${context.payload.repository.html_url}/pulls?q=is%3Apr+is%3Aopen+base%3Amain)`
+            });
+            
+            // Find team members to notify (repository collaborators)
+            const collaborators = await github.rest.repos.listCollaborators({
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            
+            // Get the first 5 collaborators (if available)
+            const maintainers = collaborators.data.slice(0, 5).map(user => '@' + user.login).join(', ');
+            
+            // Create an issue to track the coordination
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Coordination needed: Consider merging to main`,
+              body: `A PR from \`${sourceBranch}\` to \`${targetBranch}\` was just merged (PR #${mergedPR.number}).\n\nThere are currently ${prCount} open PRs targeting the \`main\` branch. Team coordination is needed to determine whether these changes should be merged to main.\n\n### Notification:\n${maintainers}\n\n### Actions Required:\n- Review the recent merge from \`${sourceBranch}\` to \`${targetBranch}\`\n- Coordinate with active PRs to main\n- Decide if a new PR should be created to merge these changes to main\n\n[View PRs to main](${context.payload.repository.html_url}/pulls?q=is%3Apr+is%3Aopen+base%3Amain)`,
+              labels: ['coordination', 'merge-to-main']
+            });
