@@ -62,7 +62,8 @@
   },
   "dependencies": {
     "jquery": "^3.4.1",
-    "normalize-scss": "^7.0.1"
+    "normalize-scss": "^7.0.1",
+    "dompurify": "^3.2.5"
   },
   "browserslist": [
     "last 2 version",

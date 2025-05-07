@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 
 // Hardcoded credentials (security issue)
 const API_KEY = "sk_test_51L8J7gHK6sQRgVTYoplm1234567890abcdefghijklmn";
@@ -29,8 +30,9 @@ const VulnerableComponent = ({ userId, role }) => {
   const handleUserInput = (input) => {
     setUserInput(input);
     
-    // Dangerous: directly setting HTML from user input - XSS vulnerability
-    setHtmlContent(`<div>${input}</div>`);
+    // Sanitize user input before setting it to htmlContent
+    const sanitizedInput = DOMPurify.sanitize(input);
+    setHtmlContent(`<div>${sanitizedInput}</div>`);
     
     // Store data in localStorage without encryption
     localStorage.setItem('userInput', input);
