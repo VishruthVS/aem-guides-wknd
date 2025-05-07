@@ -1,0 +1,67 @@
+name: "Line Length Check"
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'ui.frontend/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'ui.frontend/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-line-length:
+    name: Check Line Length
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for lines exceeding 120 characters
+        run: |
+          echo "# Line Length Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Find files with lines exceeding 120 characters in ui.frontend directory
+          LONG_LINES=$(grep -r --include="*.*" -n ".\{121,\}" ui.frontend || true)
+          
+          if [ -z "$LONG_LINES" ]; then
+            echo "✅ No lines exceeding 120 characters found in ui.frontend directory." >> $GITHUB_STEP_SUMMARY
+            echo "::notice::No lines exceeding 120 characters found."
+          else
+            # Count total violations
+            LINE_COUNT=$(echo "$LONG_LINES" | wc -l)
+            echo "❌ Found $LINE_COUNT lines exceeding 120 characters in ui.frontend directory:" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            
+            # Create a table for the results
+            echo "| File | Line | Content |" >> $GITHUB_STEP_SUMMARY
+            echo "| ---- | ---- | ------- |" >> $GITHUB_STEP_SUMMARY
+            
+            # Process each line and add to the summary
+            echo "$LONG_LINES" | while IFS=':' read -r file line content; do
+              # Truncate content if too long for display
+              if [ ${#content} -gt 100 ]; then
+                display_content="${content:0:97}..."
+              else
+                display_content="$content"
+              fi
+              
+              # Escape content for markdown table
+              display_content=$(echo "$display_content" | sed 's/|/\\|/g')
+              
+              echo "| $file | $line | $display_content |" >> $GITHUB_STEP_SUMMARY
+              
+              # Create annotations visible in GitHub UI
+              echo "::warning file=$file,line=$line::Line exceeds 120 characters"
+            done
+            
+            # Make the check fail if we found any violations
+            echo "::error::Found $LINE_COUNT lines exceeding 120 characters in ui.frontend directory. See job summary for details."
+            exit 1
+          fi

@@ -1,0 +1,8 @@
+---
+library: false
+warnOnImplicitThis: false
+compileForOverlayEval: false
+name: aem-guides-wknd/custom-queries-javascript
+version: 1.0.0
+dependencies:
+  codeql/javascript-all: ^2.6.2
